@@ -9,7 +9,6 @@ const count = ref(0)
     <nav>
       <a href="/">首頁</a>
       <a href="/cats">貓咪圖鑑</a>
-      <a href="/about">關於</a>
     </nav>
   </div>
   <RouterView />
