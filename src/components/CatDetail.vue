@@ -13,14 +13,14 @@
 
     <div v-else class="content">
       <h1 class="main-title">
-        No.{{ routeId }} {{ getLastFormName() }}
+         {{ getAllName() }}
       </h1>
 
       <div v-for="cat in catForms" :key="cat.id" class="form-card">
         
         <div class="card-header">
           <span class="form-tag">第 {{ cat.form }} 型態</span>
-          <h2>{{ cat.name_cn || cat.name_jp }}</h2>
+          <h2>{{ cat.name_cn }}({{cat.name_jp}})</h2>
         </div>
 
         <div class="card-body">
@@ -164,10 +164,11 @@ const calculateDPS = (cat) => {
 };
 
 // 3. 取得最後型態的名字 (當標題用)
-const getLastFormName = () => {
+const getAllName = () => {
     if (catForms.value.length === 0) return '';
-    const last = catForms.value[catForms.value.length - 1];
-    return last.name_cn || last.name_jp;
+    return catForms.value
+        .map(cat => cat.name_cn || cat.name_jp)
+        .join('->');
 };
 
 // 4. 解析屬性 (Traits)
