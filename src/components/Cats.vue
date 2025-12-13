@@ -1,7 +1,29 @@
 <template>
   <div class="container">
     <h1>貓咪大戰爭數據表</h1>
-    
+
+    <div class="control-bar">
+        <span class="label-text">顯示模式：</span>
+        <div class="button-group">
+            <button 
+                @click="formMode = 'all'" 
+                :class="{ active: formMode === 'all' }"
+            >全部</button>
+            <button 
+                @click="formMode = '1'" 
+                :class="{ active: formMode === '1' }"
+            >一階</button>
+            <button 
+                @click="formMode = '2'" 
+                :class="{ active: formMode === '2' }"
+            >二階</button>
+            <button 
+                @click="formMode = '3'" 
+                :class="{ active: formMode === '3' }"
+            >三階</button>
+        </div>
+    </div>
+
     <div class="filter-row">
 
         <div class="dropdown-wrapper">
@@ -86,6 +108,9 @@
     import { traitOptions, abilityOptions, effectOptions } from '../config/options'
 
     const { allCats, isLoading, fetchData } = useCatsData()
+
+    const formMode = ref('highest');// 控制顯示模式
+
     const selectedTraits = ref([]);
     const selectedAbilities = ref([]); 
     const selectedEffects = ref([]); 
@@ -98,19 +123,40 @@
     // 篩選邏輯
     const filteredCats = computed(() => {
         if (!allCats.value) return [];
-        const results= allCats.value.filter(cat => {
+        let data = allCats.value;
+        // ★ 步驟 1: 根據 formMode 過濾型態
+        if (formMode.value === 'all') {
+            // 模式：全部顯示 (不做任何過濾)
+        } 
+
+        else {
+            // 模式：指定階級 ('1', '2', '3')
+            const targetForm = parseInt(formMode.value);
+            data = data.filter(item => item.form === targetForm);
+        }
+
+        // 2. 接著執行屬性/能力篩選
+        const results = data.filter(cat => {
             const matchTrait = selectedTraits.value.length === 0 || 
                                selectedTraits.value.some(t => cat.traits.includes(t));
             const matchAbility = selectedAbilities.value.length === 0 || 
                                  selectedAbilities.value.some(opt => cat.abilities.includes(opt));
-            
             const matchEffect = selectedEffects.value.length === 0 || 
                                 selectedEffects.value.some(opt => cat.effects.includes(opt));
             
             return matchTrait && matchAbility && matchEffect;
         });
+
+        // 3. 最後排序：先排 ID，如果 ID 一樣(開了全顯示)再排階級
         return results.slice().sort((a, b) => {
-            return a.id_main - b.id_main;
+            const idA = Number(a.id_main);
+            const idB = Number(b.id_main);
+
+            // 第一層：先比「家族編號」(No.1 < No.2)
+            if (idA !== idB) {
+                return idA - idB;
+            }
+            return a.form - b.form; // 1階 -> 2階 -> 3階
         });
     });
 

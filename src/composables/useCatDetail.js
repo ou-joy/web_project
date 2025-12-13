@@ -43,7 +43,7 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
     // 5. 解析能力 (Abilities)
     const getAbilities = (cat) => {
         const list = [];
-        for (const [key, label] of Object.entries(traitsMap)) {
+        for (const [key, label] of Object.entries(abilitiesMap)) {
             if (cat[key] && cat[key] !== 0) list.push(label);
         }
         return list;
