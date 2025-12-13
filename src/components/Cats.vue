@@ -3,7 +3,21 @@
     <h1>貓咪大戰爭數據表</h1>
     
     <div class="filter-row">
-        
+
+        <div class="dropdown-wrapper">
+            <div class="dropdown-trigger" @click="toggleTrait">
+                <span>{{ traitButtonText }}</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div v-if="isTraitOpen" class="dropdown-menu">
+                <label v-for="opt in traitOptions" :key="opt" class="dropdown-item">
+                    <input type="checkbox" :value="opt" v-model="selectedTraits">
+                    {{ opt }}
+                </label>
+            </div>
+            <div v-if="isTraitOpen" class="overlay" @click="isTraitOpen = false"></div>
+        </div>
+
         <div class="dropdown-wrapper">
             <div class="dropdown-trigger" @click="toggleAbility">
                 <span>{{ abilityButtonText }}</span>
@@ -72,56 +86,93 @@
     // --- 1. 選項設定 ---
     
     // 能力選項 (針對數值或特性)
+    const traitOptions =['紅色敵人','飄浮敵人','黑色敵人','鋼鐵敵人',
+    '無屬性','天使','異星戰士','不死生物','古代種','惡魔'
+    ];
     const abilityOptions = [
-        "攻擊力上升","死前存活","善於攻城","會心一擊","鋼鐵殺手",
+        "攻擊力上升","死前存活","善於攻城","會心一擊",
         "終結不死","靈魂攻擊","破壞護盾","破壞惡魔盾","渾身一擊","得到很多金錢",
-        "鋼鐵","小波動","波動","小烈波","烈波攻擊","烈波反擊",
-        "爆波攻擊","波動滅止","召喚","終結魔女","終結使徒",
-        "超生命體特效","超獸特效","超賢者特效","怪人特效","一次攻擊",
+        "鋼鐵","小波動","波動","烈波攻擊","波動滅止",
+        "超生命體特效","超獸特效",
         "攻擊力下降無效","動作停止無效","動作變慢無效","打飛敵人無效","波動傷害無效",
-        "烈波傷害無效","爆波傷害無效","傳送無效","古代詛咒無效","毒擊傷害無效",
-        "魔王震波無效",
-        "抗擊耐性","動止耐性","動慢耐性","抗飛耐性","抗波耐性",
-        "抗烈波耐性","抗傳耐性","抗古代詛咒耐性","抗毒擊耐性"
+        "烈波傷害無效","傳送無效","古代詛咒無效","毒擊傷害無效",
     ];
 
     // 效果選項 (針對控場效果)
     const effectOptions = [
         "攻擊力下降", "使動作停止", "使動作變慢", "只能攻擊", "善於攻擊", "很耐打", "超級耐打", 
-        "超大傷害","極度傷害","打飛敵人","傳送","古代的詛咒","攻擊無效","毒擊"
+        "超大傷害","極度傷害","打飛敵人","傳送","古代的詛咒","攻擊無效"
     ];
 // --- 2. 翻譯對照表 (關鍵！) ---
     // 左邊是你 JSON 的英文欄位，右邊是你要顯示的中文
+    const TRAIT_MAP = {
+    'trait_red': '紅色敵人',
+    'trait_floating': '飄浮敵人',
+    'trait_black': '黑色敵人',
+    'trait_metal': '鋼鐵敵人',
+    'trait_traitless': '無屬性',
+    'trait_angel': '天使',
+    'trait_alien': '異星戰士',
+    'trait_zombie': '不死生物',
+    'trait_ancient': '古代種',
+    'trait_devil': '惡魔'
+    };
     const KEY_MAPPING = {
         // 能力類 (Abilities)
-        'ability_strengthen': '攻擊力上升',
+        'ability_attack_up': '攻擊力上升',
         'ability_survive': '死前存活',
         'ability_base_destroyer': '善於攻城',
         'ability_crit': '會心一擊',
-        'ability_metal': '鋼鐵', // 鋼鐵體質
-        'ability_z_killer': '終結不死',
-        'ability_soul_strike': '靈魂攻擊', // 假設 JSON 有這欄
+        'ability_zombie_killer': '終結不死',
+        'ability_soulstrike': '靈魂攻擊',
         'ability_shield_pierce': '破壞護盾',
         'ability_devil_shield_pierce': '破壞惡魔盾',
         'ability_savage_blow': '渾身一擊',
         'ability_extra_money': '得到很多金錢',
+        'ability_metal': '鋼鐵',
+        'ability_mini_wave': '小波動',
+        'ability_wave': '波動',
+        'ability_surge': '烈波攻擊',
+        'ability_wave_blocker': '波動滅止',
+        'ability_colossus_slayer': '超生命體特效',
+        'ability_behemoth_slayer': '超獸特效',
 
         // 效果類 (Effects)
-        'effect_kb': '擊退',
-        'effect_freeze': '暫停',
-        'effect_slow': '變慢',
         'effect_weaken': '攻擊力下降',
-        'effect_curse': '詛咒',
-        'effect_wave': '波動',
-        'effect_surge': '烈波', // 或 '烈波攻擊'
-        'effect_warp': '傳送'
+        'effect_freeze': '使動作停止',
+        'effect_slow': '使動作變慢',
+        'ability_target_only': '只能攻擊',
+        'ability_strong': '善於攻擊',
+        'ability_resistant': '很耐打',
+        'ability_super_resistant': '超級耐打',
+        'ability_massive_dmg': '超大傷害',
+        'ability_insane_dmg': '極度傷害',
+        'effect_kb': '打飛敵人',
+        'effect_warp': '傳送',
+        'effect_curse': '古代的詛咒',
+        'ability_dodge': '攻擊無效'
     };
-
+    const IMMUNE_MAPPING={
+        'immune_weaken': '攻擊力下降無效',
+        'immune_freeze': '動作停止無效',
+        'immune_slow': '動作變慢無效',
+        'immune_kb': '打飛敵人無效',
+        'immune_wave': '波動傷害無效',
+        'immune_surge': '烈波傷害無效',
+        'immune_warp': '傳送無效',
+        'immune_curse': '古代詛咒無效',
+        'immune_toxic': '毒擊傷害無效'
+    };
     // --- 3. 變數狀態 ---
     const allCats = ref([]);          
     const isLoading = ref(true);
+
+    const selectedTraits = ref([]);
+    const isTraitOpen = ref(false);
+
     const selectedAbilities = ref([]); 
     const isAbilityOpen = ref(false);
+
     const selectedEffects = ref([]); 
     const isEffectOpen = ref(false);
 
@@ -140,19 +191,27 @@
             allCats.value = jsonData.map(item => {
                 
                 // 1. 處理能力：檢查所有 ability_ 開頭的欄位，如果是 1 就加入清單
+                const traits = [];
                 const abilities = [];
                 const effects = [];
 
-                // 遍歷 mapping 表，看這隻貓有沒有對應的屬性
+                // A. 處理屬性
+                for (const [key, label] of Object.entries(TRAIT_MAP)) {
+                    if (item[key] && item[key] !== 0) traits.push(label);
+                }
+
+                // B. 處理能力與效果 (KEY_MAPPING)
                 for (const [key, label] of Object.entries(KEY_MAPPING)) {
-                    // 你的 JSON 資料中，數值可能為 1 (有) 或 0 (無)，或是 null
                     if (item[key] && item[key] !== 0) {
-                        // 區分是「能力」還是「效果」，分別存入不同陣列
-                        if (abilityOptions.includes(label)) {
-                            abilities.push(label);
-                        } else if (effectOptions.includes(label)) {
-                            effects.push(label);
-                        }
+                        if (abilityOptions.includes(label)) abilities.push(label);
+                        else if (effectOptions.includes(label)) effects.push(label);
+                    }
+                }
+
+                // C. 處理無效能力 (IMMUNE_MAPPING) -> 視為能力
+                for (const [key, label] of Object.entries(IMMUNE_MAPPING)) {
+                    if (item[key] && item[key] !== 0) {
+                        abilities.push(label);
                     }
                 }
 
@@ -163,33 +222,42 @@
                     name: item.name_cn || item.name_jp, // 優先顯示中文，沒有就顯示日文
                     hp: item.hp,
                     atk: item.attack, // JSON 裡的欄位是 attack
-                    ability: abilities.join(', '), // 把陣列變成字串："善於攻城, 死前存活"
-                    effect: effects.join(', ')     // 把陣列變成字串："擊退, 暫停"
+                    traits: traits,
+                    abilities: abilities, // 包含功能和無效
+                    effects: effects, // 包含控場
+                    // 為了表格顯示方便，合併所有能力文字
+                    all_abilities: [...effects, ...abilities]
                 };
             });
 
         } catch (err) {
-            console.error("讀取錯誤:", err);
-            alert("讀取 JSON 失敗，請確認檔案是否在 public 資料夾中");
+            console.error("錯誤位置：", err);
+            alert(err.message);
         } finally {
             isLoading.value = false;
         }
     };
 
-    // --- 5. 篩選邏輯 (不變) ---
+    // --- 5. 篩選邏輯---
     const filteredCats = computed(() => {
         return allCats.value.filter(cat => {
+            const matchTrait = selectedTraits.value.length === 0 || 
+                               selectedTraits.value.some(t => cat.traits.includes(t));
             const matchAbility = selectedAbilities.value.length === 0 || 
-                                 selectedAbilities.value.some(opt => cat.ability.includes(opt));
+                                 selectedAbilities.value.some(opt => cat.abilities.includes(opt));
             
             const matchEffect = selectedEffects.value.length === 0 || 
-                                selectedEffects.value.some(opt => cat.effect.includes(opt));
+                                selectedEffects.value.some(opt => cat.effects.includes(opt));
             
-            return matchAbility && matchEffect;
+            return matchTrait && matchAbility && matchEffect;
         });
     });
 
-    // --- 6. 介面輔助函式 (不變) ---
+    // --- 6. 介面輔助函式---
+    const traitButtonText = computed(() => {
+        const count = selectedTraits.value.length;
+        return count === 0 ? '選擇屬性...' : `屬性 (${count})`;
+    });
     const abilityButtonText = computed(() => {
         const count = selectedAbilities.value.length;
         return count === 0 ? '選擇能力...' : `能力 (${count})`;
@@ -199,6 +267,11 @@
         const count = selectedEffects.value.length;
         return count === 0 ? '選擇效果...' : `效果 (${count})`;
     });
+
+    const toggleTrait = () => {
+        isTraitOpen.value = !isTraitOpen.value;
+        if(isTraitOpen.value) { isAbilityOpen.value = false; isEffectOpen.value = false; }
+    };
 
     const toggleAbility = () => {
         isAbilityOpen.value = !isAbilityOpen.value;
