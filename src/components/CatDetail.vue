@@ -99,123 +99,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+  import { useCatDetail } from '../composables/useCatDetail';
+  import {  TRAIT_MAP, KEY_MAPPING } from '../config/mappings';
 
-const route = useRoute();
-const routeId = route.params.id; // 取得網址上的 ID
-
-const catForms = ref([]);
-const isLoading = ref(true);
-
-// --- 對照表：把 JSON 的英文欄位翻成中文 ---
-const MAP_TRAITS = {
-    'trait_red': '紅色敵人',
-    'trait_floating': '漂浮敵人',
-    'trait_black': '黑色敵人',
-    'trait_metal': '鋼鐵敵人',
-    'trait_traitless': '無屬性',
-    'trait_angel': '天使敵人',
-    'trait_alien': '異星戰士',
-    'trait_zombie': '不死生物',
-    'trait_ancient': '古代種',
-    'trait_devil': '惡魔'
-};
-
-const MAP_ABILITIES = {
-    'ability_strong': '善於攻擊',
-    'ability_resistant': '很耐打',
-    'ability_massive_dmg': '超大傷害',
-    'ability_insane_dmg': '極度傷害',
-    'ability_target_only': '只能攻擊',
-    'ability_strengthen': '攻擊力上升',
-    'ability_survive': '死前存活',
-    'ability_base_destroyer': '善於攻城',
-    'ability_crit': '會心一擊',
-    'ability_metal': '鋼鐵體質',
-    'ability_z_killer': '終結不死',
-    'ability_shield_pierce': '破壞護盾',
-    'ability_devil_shield_pierce': '破壞惡魔盾',
-    'ability_savage_blow': '渾身一擊',
-    'ability_extra_money': '金錢增加',
-    'effect_kb': '擊退',
-    'effect_freeze': '暫停',
-    'effect_slow': '變慢',
-    'effect_weaken': '降攻',
-    'effect_curse': '詛咒',
-    'effect_wave': '波動',
-    'effect_surge': '烈波',
-    'effect_warp': '傳送無效'
-};
-
-// --- 工具函式 ---
-
-// 1. Frame 轉秒數 (貓戰是 30 frame = 1秒)
-const frameToSec = (frames) => {
-    if(!frames) return 0;
-    return (frames / 30).toFixed(2);
-}
-
-// 2. 計算 DPS
-const calculateDPS = (cat) => {
-    if (!cat.attack_freq_frames || cat.attack_freq_frames === 0) return 0;
-    const seconds = cat.attack_freq_frames / 30;
-    return Math.round(cat.attack / seconds);
-};
-
-// 3. 取得最後型態的名字 (當標題用)
-const getAllName = () => {
-    if (catForms.value.length === 0) return '';
-    return catForms.value
-        .map(cat => cat.name_cn || cat.name_jp)
-        .join('->');
-};
-
-// 4. 解析屬性 (Traits)
-const getTraits = (cat) => {
-    const list = [];
-    for (const [key, label] of Object.entries(MAP_TRAITS)) {
-        if (cat[key] && cat[key] !== 0) list.push(label);
-    }
-    return list;
-};
-
-// 5. 解析能力 (Abilities)
-const getAbilities = (cat) => {
-    const list = [];
-    for (const [key, label] of Object.entries(MAP_ABILITIES)) {
-        if (cat[key] && cat[key] !== 0) list.push(label);
-    }
-    return list;
-};
-
-// --- 抓取資料 ---
-const fetchDetail = async () => {
-    isLoading.value = true;
-    try {
-        const res = await fetch('/battle_cats_characters.json');
-        if(!res.ok) throw new Error("讀取失敗");
-        
-        const data = await res.json();
-
-        // ★ 核心邏輯：找出 id_main 等於網址參數的所有資料
-        // 使用 == 來允許字串與數字比對 (例如 "1" == 1)
-        const matched = data.filter(c => c.id == routeId);
-
-        // 依照 form (1, 2, 3) 排序
-        catForms.value = matched.sort((a, b) => a.form - b.form);
-
-    } catch (err) {
-        console.error(err);
-    } finally {
-        isLoading.value = false;
-    }
-};
-
-onMounted(() => {
-    fetchDetail();
-});
+  const {
+    catForms, isLoading, routeId,
+    frameToSec, calculateDPS,
+    getAllName, getTraits, getAbilities
+  } = useCatDetail({ traitsMap: TRAIT_MAP, abilitiesMap: KEY_MAPPING });
 </script>
+
 
 <style scoped>
 .detail-page {
