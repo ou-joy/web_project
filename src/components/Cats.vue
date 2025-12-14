@@ -7,6 +7,7 @@
             <span class="label">模式</span>
             <div class="btn-group">
                 <button @click="formMode='all'" :class="{active: formMode==='all'}">全部</button>
+                <button @click="formMode='highest'" :class="{active: formMode==='highest'}">最高型態</button>
                 <button @click="formMode='1'" :class="{active: formMode==='1'}">一階</button>
                 <button @click="formMode='2'" :class="{active: formMode==='2'}">二階</button>
                 <button @click="formMode='3'" :class="{active: formMode==='3'}">三階</button>
@@ -119,7 +120,7 @@
 
     const formMode = ref('all');// 控制顯示模式
     const searchType = ref('hp'); // 預設搜尋體力
-    const minVal = ref('');
+    const minVal = ref('0');
     const maxVal = ref('');
 
     const selectedTraits = ref([]);
@@ -139,7 +140,24 @@
         if (formMode.value === 'all') {
             // 模式：全部顯示 (不做任何過濾)
         } 
-
+        else if (formMode.value === 'highest') {
+            const catMap = new Map();
+            data.forEach(item => {
+                const unitId = item.id; // 取得家族 ID (例如 0)
+                
+                // 防呆：確保 unitId 存在
+                if (unitId !== undefined) {
+                    // 邏輯：如果 Map 還沒存這隻貓，或者目前這隻的 form (階級) 比較大
+                    // 就把它存進去 (覆蓋舊的低階型態)
+                    if (!catMap.has(unitId) || item.form > catMap.get(unitId).form) {
+                        catMap.set(unitId, item);
+                    }
+                }
+            });
+            
+            // 將 Map 的值轉回陣列 -> 這就是只剩最高型態的清單了
+            data = Array.from(catMap.values());
+        } 
         else {
             // 模式：指定階級 ('1', '2', '3')
             const targetForm = parseInt(formMode.value);
@@ -154,7 +172,7 @@
                                  selectedAbilities.value.some(opt => cat.abilities.includes(opt));
             const matchEffect = selectedEffects.value.length === 0 || 
                                 selectedEffects.value.some(opt => cat.effects.includes(opt));
-            // ★ 修改 2：動態數值篩選邏輯
+            // 動態數值篩選邏輯
         let isValueMatch = true;
         
         // 只有當使用者有輸入數字時，才進行比較
@@ -189,7 +207,7 @@
     });
 
     const clearSearch = () => {// 清除函式
-        minVal.value = '';
+        minVal.value = '0';
         maxVal.value = '';
     };
 
