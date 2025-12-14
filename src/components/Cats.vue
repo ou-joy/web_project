@@ -190,7 +190,7 @@
             
             isValueMatch = matchMin && matchMax;
         }
-            return matchTrait && matchAbility && matchEffect ;
+            return matchTrait && matchAbility && matchEffect && isValueMatch;
         });
 
         // 3. 最後排序：先排 ID，如果 ID 一樣(開了全顯示)再排階級
