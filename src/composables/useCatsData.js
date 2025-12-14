@@ -50,10 +50,12 @@ export function useCatsData() {
                     id_form: item.idform,
                     name: item.name_cn || item.name_jp, // 優先顯示中文，沒有就顯示日文
                     hp: item.hp,
-                    atk: item.attack, // JSON 裡的欄位是 attack
+                    atk: item.attack, 
+                    range: item.range,
+                    kb: item.kb,
                     traits: traits,
-                    abilities: abilities, // 包含功能和無效
-                    effects: effects, // 包含控場
+                    abilities: abilities, 
+                    effects: effects, 
                     // 為了表格顯示方便，合併所有能力文字
                     all_abilities: [...effects, ...abilities]
                 };

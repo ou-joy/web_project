@@ -2,26 +2,30 @@
   <div class="container">
     <h1>貓咪大戰爭數據表</h1>
 
-    <div class="control-bar">
-        <span class="label-text">顯示模式：</span>
-        <div class="button-group">
-            <button 
-                @click="formMode = 'all'" 
-                :class="{ active: formMode === 'all' }"
-            >全部</button>
-            <button 
-                @click="formMode = '1'" 
-                :class="{ active: formMode === '1' }"
-            >一階</button>
-            <button 
-                @click="formMode = '2'" 
-                :class="{ active: formMode === '2' }"
-            >二階</button>
-            <button 
-                @click="formMode = '3'" 
-                :class="{ active: formMode === '3' }"
-            >三階</button>
+    <div class="toolbar">
+        <div class="tool-group">
+            <span class="label">模式</span>
+            <div class="btn-group">
+                <button @click="formMode='all'" :class="{active: formMode==='all'}">全部</button>
+                <button @click="formMode='1'" :class="{active: formMode==='1'}">一階</button>
+                <button @click="formMode='2'" :class="{active: formMode==='2'}">二階</button>
+                <button @click="formMode='3'" :class="{active: formMode==='3'}">三階</button>
+            </div>
         </div>
+
+        <div class="tool-group search-group">
+            <select v-model="searchType" class="search-select">
+                <option value="hp">體力</option>
+                <option value="atk">攻擊</option>
+                <option value="range">射程</option>
+                <option value="kb">KB</option>
+            </select>
+            <input type="number" v-model.number="minVal" placeholder="Min" class="num-input">
+            <span class="divider">~</span>
+            <input type="number" v-model.number="maxVal" placeholder="Max" class="num-input">
+            <button v-if="minVal!=='' || maxVal!==''" @click="clearSearch" class="clear-btn">✕</button>
+        </div>
+
     </div>
 
     <div class="filter-row">
@@ -78,23 +82,27 @@
             <thead>
                 <tr>
                     <th>編號</th>
-                    <th>名稱</th>
                     <th>圖片</th>
+                    <th>名稱</th>
                     <th>生命</th>
                     <th>攻擊</th>
+                    <th>射程</th>
+                    <th>擊退</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="cat in filteredCats" :key="cat.id">
+                <tr v-for="cat in filteredCats" :key="cat.id_form">
                     <td>{{ cat.id_form }}</td>
-                    <td>{{ cat.name }}</td>
                     <td>
                       <router-link :to="'/cat/' + cat.id" class="img-link">
                       <span class="img-placeholder">圖</span>
                       </router-link>  
                     </td>
+                    <td>{{ cat.name }}</td>
                     <td>{{ cat.hp }}</td>
                     <td>{{ cat.atk }}</td>
+                    <td>{{ cat.range }}</td>
+                    <td>{{ cat.kb }}</td>
                 </tr>
             </tbody>
         </table>
@@ -109,7 +117,10 @@
 
     const { allCats, isLoading, fetchData } = useCatsData()
 
-    const formMode = ref('highest');// 控制顯示模式
+    const formMode = ref('all');// 控制顯示模式
+    const searchType = ref('hp'); // 預設搜尋體力
+    const minVal = ref('');
+    const maxVal = ref('');
 
     const selectedTraits = ref([]);
     const selectedAbilities = ref([]); 
@@ -143,14 +154,31 @@
                                  selectedAbilities.value.some(opt => cat.abilities.includes(opt));
             const matchEffect = selectedEffects.value.length === 0 || 
                                 selectedEffects.value.some(opt => cat.effects.includes(opt));
+            // ★ 修改 2：動態數值篩選邏輯
+        let isValueMatch = true;
+        
+        // 只有當使用者有輸入數字時，才進行比較
+        if (minVal.value !== '' || maxVal.value !== '') {
+            let targetValue = 0;
             
-            return matchTrait && matchAbility && matchEffect;
+            // 根據選擇的類型，抓取對應的數值
+            if (searchType.value === 'hp') targetValue = Number(cat.hp);
+            else if (searchType.value === 'atk') targetValue = Number(cat.atk);
+            else if (searchType.value === 'range') targetValue =  Number(cat.range);
+            else if (searchType.value === 'kb') targetValue = Number(cat.kb);
+
+            const matchMin = minVal.value === '' || targetValue >= minVal.value;
+            const matchMax = maxVal.value === '' || targetValue <= maxVal.value;
+            
+            isValueMatch = matchMin && matchMax;
+        }
+            return matchTrait && matchAbility && matchEffect ;
         });
 
         // 3. 最後排序：先排 ID，如果 ID 一樣(開了全顯示)再排階級
         return results.slice().sort((a, b) => {
-            const idA = Number(a.id_main);
-            const idB = Number(b.id_main);
+            const idA = Number(a.id);
+            const idB = Number(b.id);
 
             // 第一層：先比「家族編號」(No.1 < No.2)
             if (idA !== idB) {
@@ -159,6 +187,13 @@
             return a.form - b.form; // 1階 -> 2階 -> 3階
         });
     });
+
+    const clearSearch = () => {// 清除函式
+        minVal.value = '';
+        maxVal.value = '';
+    };
+
+    
 
     // --- 6. 介面輔助函式---
     const traitButtonText = computed(() => {
@@ -283,5 +318,73 @@ th { background-color: #f0f0f0; }
   display: inline-block; width: 30px; height: 30px;
   background: #eee; text-align: center; line-height: 30px;
   border-radius: 50%; font-size: 12px;
+}
+/* 工具列容器：讓東西排在同一行 */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap; /* 螢幕小自動換行 */
+    gap: 15px;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+}
+
+.tool-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.label { 
+    font-weight: bold; color: #555; font-size: 0.9em; 
+}
+
+/* 按鈕群組 */
+.btn-group { 
+    display: flex; gap: 2px; 
+    }
+.btn-group button {
+    padding: 5px 10px;
+    border: 1px solid #ced4da;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.btn-group button:first-child { 
+    border-radius: 4px 0 0 4px; 
+}
+.btn-group button:last-child { 
+    border-radius: 0 4px 4px 0; 
+    }
+.btn-group button:hover { 
+    background: #e9ecef; 
+    }
+.btn-group button.active { 
+    background: #0d6efd; color: white; border-color: #0d6efd; 
+}
+
+/* 搜尋區 */
+.search-group {
+    background: white;
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+}
+.search-select { 
+    border: none; background: transparent; color: #0d6efd; font-weight: bold; cursor: pointer; outline: none; 
+}
+.num-input { 
+    width: 50px; border: none; background: #f1f3f5; text-align: center; border-radius: 4px; padding: 2px; 
+}
+.clear-btn { 
+    background: #dc3545; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 0.7em; margin-left: 5px; 
+}
+
+/* 筆數靠右 */
+.count-info { 
+    margin-left: auto; color: #666; font-size: 0.9em; 
 }
 </style>
