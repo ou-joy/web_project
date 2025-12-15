@@ -1,8 +1,8 @@
 <template>
   <div class="detail-page">
     <div class="nav-header">
-      <button @click="$router.push('/')" class="back-btn">
-        &larr; 返回圖鑑列表
+      <button @click="$router.go(-1)" class="back-btn">
+        &larr; 返回上一頁
       </button>
     </div>
 
@@ -26,7 +26,7 @@
         <div class="card-body">
           <div class="img-box">
              <div class="placeholder">
-               <span>圖片 ID</span>
+               <img :src="getPicture(cat.id,cat.form)">
                <strong>{{ cat.id_full }}</strong>
              </div>
              </div>
@@ -100,6 +100,7 @@
 
 <script setup>
   import { useCatDetail } from '../composables/useCatDetail';
+  import { getPicture } from '../composables/getPicture'
   import {  TRAIT_MAP, KEY_MAPPING } from '../config/mappings';
 
   const {

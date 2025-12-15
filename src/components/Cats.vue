@@ -96,7 +96,7 @@
                     <td>{{ cat.id_form }}</td>
                     <td>
                       <router-link :to="'/cat/' + cat.id" class="img-link">
-                      <span class="img-placeholder">圖</span>
+                      <img :src="getPicture(cat.id,cat.form)" class="img-placeholder">
                       </router-link>  
                     </td>
                     <td>{{ cat.name }}</td>
@@ -119,11 +119,12 @@
 <script setup>
     import { ref, computed, onMounted, watch } from 'vue'
     import { useCatsData } from '../composables/useCatsData'
+    import { getPicture } from '../composables/getPicture'
     import { traitOptions, abilityOptions, effectOptions } from '../config/options'
 
     const { allCats, isLoading, fetchData } = useCatsData()
 
-    const formMode = ref('all');// 控制顯示模式
+    const formMode = ref('highest');// 控制顯示模式
     const searchType = ref('hp'); // 預設搜尋體力
     const minVal = ref('0');
     const maxVal = ref('');
@@ -368,9 +369,9 @@ th, td {
 th { background-color: #f0f0f0; }
 
 .img-placeholder {
-  display: inline-block; width: 30px; height: 30px;
-  background: #eee; text-align: center; line-height: 30px;
-  border-radius: 50%; font-size: 12px;
+    display: inline-block; width: 100px; height: 80px;
+    background: #eee; text-align: center; line-height: 30px;
+    font-size: 12px;
 }
 /* 工具列容器：讓東西排在同一行 */
 .toolbar {
