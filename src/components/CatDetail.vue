@@ -35,15 +35,15 @@
             <div class="stat-grid">
               <div class="stat-item">
                 <label>體力 (HP)</label>
-                <span>{{ cat.hp }}</span>
+                <span>{{ cat.hp*2.5 }}</span>
               </div>
               <div class="stat-item">
                 <label>攻擊力 (ATK)</label>
-                <span>{{ cat.attack }}</span>
+                <span>{{ cat.attack*2.5 }}</span>
               </div>
               <div class="stat-item dps">
                 <label>DPS (秒傷)</label>
-                <span>{{ calculateDPS(cat) }}</span>
+                <span>{{ calculateDPS(cat)*2.5 }}</span>
               </div>
               <div class="stat-item">
                 <label>射程</label>
@@ -70,7 +70,7 @@
                 <span>{{ cat.cost }}</span>
               </div>
               <div class="stat-item">
-                <label>範圍攻擊</label>
+                <label>攻擊方式</label>
                 <span>{{ cat.area_attack === 1 ? '範圍' : '單體' }}</span>
               </div>
             </div>

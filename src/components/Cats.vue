@@ -285,7 +285,9 @@
 </script>
 
 <style scoped>
+
 .container {
+  background-color: #e0fffd;
   padding: 20px;
   font-family: "Microsoft JhengHei", sans-serif;
 }
@@ -415,9 +417,9 @@ th { background-color: #f0f0f0; }
     }
 .btn-group button:hover { 
     background: #e9ecef; 
-    }
+    }y
 .btn-group button.active { 
-    background: #0d6efd; color: white; border-color: #0d6efd; 
+    background: #0d51fd; color: white; border-color: #0d6efd; 
 }
 
 /* 搜尋區 */

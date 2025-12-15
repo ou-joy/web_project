@@ -49,8 +49,8 @@ export function useCatsData() {
                     form: item.form,    
                     id_form: item.idform,
                     name: item.name_cn || item.name_jp, // 優先顯示中文，沒有就顯示日文
-                    hp: item.hp,
-                    atk: item.attack, 
+                    hp: (item.hp*2.5),
+                    atk: (item.attack*2.5), 
                     range: item.range,
                     kb: item.kb,
                     traits: traits,
