@@ -92,7 +92,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="cat in filteredCats" :key="cat.id_form">
+                <tr v-for="cat in paginatedCats" :key="cat.id_form">
                     <td>{{ cat.id_form }}</td>
                     <td>
                       <router-link :to="'/cat/' + cat.id" class="img-link">
@@ -108,11 +108,16 @@
             </tbody>
         </table>
     </div>
-  </div>
+        <div class="pagination" v-if="totalPages > 1">
+            <button @click="prevPage" :disabled="currentPage === 1">上一頁</button>
+            <span>第 {{ currentPage }} / {{ totalPages }} 頁</span>
+            <button @click="nextPage" :disabled="currentPage === totalPages">下一頁</button>
+        </div>
+    </div>
 </template>
 
 <script setup>
-    import { ref, computed, onMounted } from 'vue'
+    import { ref, computed, onMounted, watch } from 'vue'
     import { useCatsData } from '../composables/useCatsData'
     import { traitOptions, abilityOptions, effectOptions } from '../config/options'
 
@@ -131,12 +136,16 @@
     const isAbilityOpen = ref(false);
     const isEffectOpen = ref(false);
     
+    // 分頁相關變數
+    const isFiltering = ref(false);
+    const currentPage = ref(1);
+    const pageSize = ref(10); // 設定為 20
 
     // 篩選邏輯
     const filteredCats = computed(() => {
         if (!allCats.value) return [];
         let data = allCats.value;
-        // ★ 步驟 1: 根據 formMode 過濾型態
+        // 根據 formMode 過濾型態
         if (formMode.value === 'all') {
             // 模式：全部顯示 (不做任何過濾)
         } 
@@ -164,7 +173,7 @@
             data = data.filter(item => item.form === targetForm);
         }
 
-        // 2. 接著執行屬性/能力篩選
+        // 接著執行屬性/能力篩選
         const results = data.filter(cat => {
             const matchTrait = selectedTraits.value.length === 0 || 
                                selectedTraits.value.some(t => cat.traits.includes(t));
@@ -193,7 +202,7 @@
             return matchTrait && matchAbility && matchEffect && isValueMatch;
         });
 
-        // 3. 最後排序：先排 ID，如果 ID 一樣(開了全顯示)再排階級
+        // 最後排序：先排 ID，如果 ID 一樣(開了全顯示)再排階級
         return results.slice().sort((a, b) => {
             const idA = Number(a.id);
             const idB = Number(b.id);
@@ -206,14 +215,40 @@
         });
     });
 
+    // ★ 分頁計算邏輯 ★
+    const totalPages = computed(() => Math.ceil(filteredCats.value.length / pageSize.value));
+    
+    // 這就是目前這一頁要顯示的 20 筆資料
+    const paginatedCats = computed(() => {
+        const start = (currentPage.value - 1) * pageSize.value;
+        const end = start + pageSize.value;
+        return filteredCats.value.slice(start, end);
+    });
+
+    const nextPage = () => { 
+        if (currentPage.value < totalPages.value) { currentPage.value++; window.scrollTo(0, 0); } 
+    };
+
+    const prevPage = () => { 
+        if (currentPage.value > 1) { currentPage.value--; window.scrollTo(0, 0); } 
+    };
+
     const clearSearch = () => {// 清除函式
         minVal.value = '0';
         maxVal.value = '';
     };
 
-    
+    // 監聽器
+    watch(searchType, () => { clearSearch(); });
 
-    // --- 6. 介面輔助函式---
+    watch([selectedTraits, selectedAbilities, selectedEffects, 
+           minVal, maxVal, formMode], () => {
+        isFiltering.value = true;
+        currentPage.value = 1; // 篩選變動時，跳回第一頁
+        setTimeout(() => { isFiltering.value = false; }, 300);
+    });
+
+    // 介面輔助函式
     const traitButtonText = computed(() => {
         const count = selectedTraits.value.length;
         return count === 0 ? '選擇屬性...' : `屬性 (${count})`;
