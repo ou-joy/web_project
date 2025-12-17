@@ -67,7 +67,7 @@
               </div>
               <div class="stat-item">
                 <label>生產成本</label>
-                <span>{{ cat.cost }}</span>
+                <span>{{ cat.cost*1.5 }}</span>
               </div>
               <div class="stat-item">
                 <label>攻擊方式</label>

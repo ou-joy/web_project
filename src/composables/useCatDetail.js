@@ -17,7 +17,7 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
     }
     const frameToSecCd = (frames) => {
         if(!frames) return 0;
-        const cdseconds = (frames / 30 *2/5).toFixed(2);
+        const cdseconds = (frames / 15 - 8.8).toFixed(2);
         if(cdseconds < 2) return 2;
         else
             return cdseconds;
