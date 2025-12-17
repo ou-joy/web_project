@@ -15,6 +15,13 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
         if(!frames) return 0;
         return (frames / 30).toFixed(2);
     }
+    const frameToSecCd = (frames) => {
+        if(!frames) return 0;
+        const cdseconds = (frames / 30 *2/5).toFixed(2);
+        if(cdseconds < 2) return 2;
+        else
+            return cdseconds;
+    }
 
     // 2. 計算 DPS
     const calculateDPS = (cat) => {
@@ -80,6 +87,7 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
         isLoading,
         routeId,
         frameToSec,
+        frameToSecCd,
         calculateDPS,
         getAllName,
         getTraits,

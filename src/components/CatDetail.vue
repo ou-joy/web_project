@@ -63,7 +63,7 @@
               </div>
               <div class="stat-item">
                 <label>生產冷卻</label>
-                <span>{{ frameToSec(cat.recharge_frames) }} 秒</span>
+                <span>{{ frameToSecCd(cat.recharge_frames) }} 秒</span>
               </div>
               <div class="stat-item">
                 <label>生產成本</label>
@@ -105,7 +105,7 @@
 
   const {
     catForms, isLoading, routeId,
-    frameToSec, calculateDPS,
+    frameToSec, frameToSecCd, calculateDPS,
     getAllName, getTraits, getAbilities
   } = useCatDetail({ traitsMap: TRAIT_MAP, abilitiesMap: KEY_MAPPING });
 </script>
