@@ -1,6 +1,7 @@
 <template>
   <div class="detail-page">
     <div class="nav-header">
+      <br><br><br>
       <button @click="$router.go(-1)" class="back-btn">
         &larr; 返回上一頁
       </button>
@@ -17,7 +18,6 @@
       </h1>
 
       <div v-for="cat in catForms" :key="cat.id" class="form-card">
-        
         <div class="card-header">
           <span class="form-tag">第 {{ cat.form }} 型態</span>
           <h2>{{ cat.name_cn }}({{cat.name_jp}})</h2>
