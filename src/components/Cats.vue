@@ -22,9 +22,9 @@
           <option value="range">射程</option>
           <option value="kb">KB</option>
         </select>
-        <input type="number" v-model.number="minVal" placeholder="Min" class="num-input">
+        <input type="number" v-model.number="minVal" min="0" placeholder="Min" class="num-input">
         <span class="divider">~</span>
-        <input type="number" v-model.number="maxVal" placeholder="Max" class="num-input">
+        <input type="number" v-model.number="maxVal"  min="0" placeholder="Max" class="num-input">
         <button v-if="minVal!=='' || maxVal!==''" @click="clearSearch" class="clear-btn">✕</button>
       </div>
     </div>
@@ -334,8 +334,27 @@ p.hint { color: gray; font-size: 0.9em; margin-top: 5px; }
 .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 90; }
 
 /* 按鈕與搜尋 */
-.btn-group button { padding: 5px 10px; border: 1px solid #ced4da; background: white; cursor: pointer; font-size: 0.9em; }
-.btn-group button.active { background: #0d51fd; color: white; border-color: #0d6efd; }
+.btn-group button { 
+  padding: 5px 10px; 
+  border: 1px solid #ced4da; 
+  background: white; 
+  cursor: pointer; 
+  font-size: 0.9em; 
+  border-radius:10px;
+  margin: 2px;
+}
+.btn-group button:hover{
+  background: #9e9e9e;
+  color: #ffffff;
+}
+.btn-group button.active { 
+  background: #0d51fd; 
+  color: white; 
+}
+.btn-group button.active:hover { 
+  background: #9e9e9e;
+  color: #ffffff;
+}
 .search-group { background: white; padding: 4px 8px; border: 1px solid #ced4da; border-radius: 20px; }
 .search-select { border: none; background: transparent; color: #0d6efd; font-weight: bold; outline: none; }
 .num-input { width: 50px; border: none; background: #f1f3f5; text-align: center; border-radius: 4px; padding: 2px; }
