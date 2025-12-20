@@ -365,15 +365,15 @@ onMounted(fetchData);
   content: "";
   background-image: url('/APP_IMG/catsback.png'); 
   background-repeat: repeat; 
-  background-size: cover; 
-background-position: center center;
-  background-size: 25%;
+  background-size: 150px; 
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: -1; 
+  will-change: transform; 
+  pointer-events: none;
 }
 .table-page { 
   border-radius: 8px;
