@@ -76,6 +76,9 @@
           <button @click="searchLogic='AND'" :class="{active: searchLogic==='AND'}">AND</button>
         </div>
       </div>
+    <div class="btn-group reset-all-btn">
+      <button @click="resetAll">一鍵清除</button>
+    </div>
     </div>
     
     <p class="hint">找到 {{ filteredCats.length }} 筆資料</p>
@@ -216,6 +219,21 @@ const filteredCats = computed(() => {
 
     return results.slice().sort((a, b) => Number(a.id) - Number(b.id) || a.form - b.form);
 });
+const resetAll = () => {
+  formMode.value = 'highest'; 
+  searchType.value = 'hp';
+  minVal.value = '0';
+  maxVal.value = '';
+  selectedTraits.value = [];
+  selectedAbilities.value = [];
+  selectedEffects.value = [];
+  searchLogic.value = 'OR'; 
+  currentPage.value = 1;
+  jumpPage.value = 1;
+  isTraitOpen.value = false;
+  isAbilityOpen.value = false;
+  isEffectOpen.value = false;
+};
 
 const totalPages = computed(() => Math.ceil(filteredCats.value.length / pageSize.value));
 
@@ -489,7 +507,7 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
 }
 /* 新增：篩選邏輯樣式微調 */
 .logic-group {
-  width:170px;
+  width:220px;
   border: 1.5px solid #9b9b9b;
   background-color: #f0f0f0;
   border-radius: 8px;
@@ -502,5 +520,11 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
 }
 .logic-toggle button:hover {
   padding: 6px 15px;
+}
+.logic-group{
+  display: inline-flex;
+}
+.logic-toggle{
+  display: inline-flex;
 }
 </style>
