@@ -185,7 +185,6 @@ const searchType = ref('hp')
 const minVal = ref('0')
 const maxVal = ref('')
 
-// 新增：查詢邏輯狀態
 const searchLogic = ref('OR')
 const selectedRarity = ref([])
 const selectedTraits = ref([])
@@ -248,6 +247,7 @@ const filteredCats = computed(() => {
             isValueMatch = (minVal.value === '' || targetValue >= minVal.value) && 
                            (maxVal.value === '' || targetValue <= maxVal.value);
         }
+
         return matchRarity && matchTrait && matchAbility && matchEffect && isValueMatch;
     });
 

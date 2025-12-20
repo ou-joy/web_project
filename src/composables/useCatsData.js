@@ -22,10 +22,8 @@ export function useCatsData() {
             if (!res.ok) throw new Error('找不到 JSON 檔案');
             const jsonData = await res.json();
 
-            // 資料轉換核心邏輯
             const processedList= jsonData.map(item => {
                 
-                // 處理能力：檢查所有 ability_ 開頭的欄位，如果是 1 就加入清單
                 const traits = [];
                 const abilities = [];
                 const effects = [];

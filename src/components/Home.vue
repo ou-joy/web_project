@@ -70,7 +70,7 @@ onUnmounted(() => {
 
 .home {
   text-align: center;
-  padding-top: 20vh; /* 稍微增加頂部距離讓標題置中感更好 */
+  padding-top: 20vh; 
 }
 
 .main-title {
