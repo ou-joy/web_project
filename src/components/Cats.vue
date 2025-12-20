@@ -441,7 +441,9 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
 .pagination { display: flex; align-items: center; gap: 10px; }
 .page-numbers { display: flex; gap: 5px; }
 .page-item { padding: 5px 10px; border: 1px solid #ced4da; background: white; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
-.page-item.active { background-color: #949494; color: white; }
+.page-item:hover { padding: 5px 10px; border: 1px solid #ced4da; color:white; background: #949494; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
+.page-item.active:hover { padding: 5px 10px; border: 1px solid #ced4da; color:white; background: #949494; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
+.page-item.active { background-color: #cacaca; color: white; }
 /* 遊戲風格紅色立體按鈕 */
 .go-btn {
   width: 40px;
