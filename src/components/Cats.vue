@@ -365,6 +365,8 @@ onMounted(fetchData);
   content: "";
   background-image: url('/APP_IMG/catsback.png'); 
   background-repeat: repeat; 
+  background-size: cover; 
+background-position: center center;
   background-size: 25%;
   position: fixed;
   top: 0;
