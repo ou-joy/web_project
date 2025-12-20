@@ -229,7 +229,6 @@ const filteredCats = computed(() => {
     }
 
     const results = data.filter(cat => {
-        // 修改：根據 searchLogic 判斷標籤篩選邏輯
         let matchTrait, matchAbility, matchEffect;
         const matchRarity = selectedRarity.value.length === 0 || selectedRarity.value.includes(cat.rarity);
 
@@ -238,7 +237,6 @@ const filteredCats = computed(() => {
           matchAbility = selectedAbilities.value.length === 0 || selectedAbilities.value.some(opt => cat.abilities.includes(opt));
           matchEffect = selectedEffects.value.length === 0 || selectedEffects.value.some(opt => cat.effects.includes(opt));
         } else {
-          // AND 邏輯：必須包含所有選中的標籤
           matchTrait = selectedTraits.value.length === 0 || selectedTraits.value.every(t => cat.traits.includes(t));
           matchAbility = selectedAbilities.value.length === 0 || selectedAbilities.value.every(opt => cat.abilities.includes(opt));
           matchEffect = selectedEffects.value.length === 0 || selectedEffects.value.every(opt => cat.effects.includes(opt));
@@ -272,6 +270,7 @@ const resetAll = () => {
   isEffectOpen.value = false;
 };
 
+//切換pages
 const totalPages = computed(() => Math.ceil(filteredCats.value.length / pageSize.value));
 
 const displayedPages = computed(() => {
@@ -323,7 +322,6 @@ const goToJumpPage = () => {
 
 const clearSearch = () => { minVal.value = '0'; maxVal.value = ''; };
 
-// 修改：監聽 searchLogic
 watch([selectedTraits, selectedAbilities, selectedEffects, minVal, maxVal, formMode, searchLogic, selectedRarity], () => {
     currentPage.value = 1; 
 });
@@ -340,13 +338,16 @@ const effectButtonText = computed(() =>
 );
 
 const toggleTrait = () => { 
-  isTraitOpen.value = !isTraitOpen.value; isAbilityOpen.value = isEffectOpen.value = false; 
+  isTraitOpen.value = !isTraitOpen.value; 
+  isAbilityOpen.value = isEffectOpen.value = false; 
 };
 const toggleAbility = () => { 
-  isAbilityOpen.value = !isAbilityOpen.value; isTraitOpen.value = isEffectOpen.value = false;
+  isAbilityOpen.value = !isAbilityOpen.value; 
+  isTraitOpen.value = isEffectOpen.value = false;
 };
 const toggleEffect = () => { 
-  isEffectOpen.value = !isEffectOpen.value; isTraitOpen.value = isAbilityOpen.value = false; 
+  isEffectOpen.value = !isEffectOpen.value;
+  isTraitOpen.value = isAbilityOpen.value = false; 
 };
 
 onMounted(fetchData);
