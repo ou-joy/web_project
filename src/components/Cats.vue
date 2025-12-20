@@ -28,57 +28,75 @@
         <button v-if="minVal!=='' || maxVal!==''" @click="clearSearch" class="clear-btn">✕</button>
       </div>
     </div>
+    
+    <div class="tool-group">
+      <span class="label">稀有度</span>
+      <div class="btn-group rarity">
+          <button 
+            v-for="rarity in rarityOptions" 
+            :key="rarity"
+            @click="toggleRarity(rarity)"
+            :class="{ active: selectedRarity.includes(rarity)}"
+          >
+            {{ rarity }}
+          </button>
+      </div>
+    </div>
 
     <div class="filter-row">
-      <div class="dropdown-wrapper">
-        <div class="dropdown-trigger" @click="toggleTrait">
-          <span>{{ traitButtonText }}</span>
-          <span class="arrow">▼</span>
+      <div class="filter-group-left">
+        <div class="dropdown-wrapper">
+          <div class="dropdown-trigger" @click="toggleTrait">
+            <span>{{ traitButtonText }}</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div v-if="isTraitOpen" class="dropdown-menu">
+            <label v-for="opt in traitOptions" :key="opt" class="dropdown-item">
+              <input type="checkbox" :value="opt" v-model="selectedTraits"> {{ opt }}
+            </label>
+          </div>
+          <div v-if="isTraitOpen" class="overlay" @click="isTraitOpen = false"></div>
         </div>
-        <div v-if="isTraitOpen" class="dropdown-menu">
-          <label v-for="opt in traitOptions" :key="opt" class="dropdown-item">
-            <input type="checkbox" :value="opt" v-model="selectedTraits"> {{ opt }}
-          </label>
+
+        <div class="dropdown-wrapper">
+          <div class="dropdown-trigger" @click="toggleAbility">
+            <span>{{ abilityButtonText }}</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div v-if="isAbilityOpen" class="dropdown-menu">
+            <label v-for="opt in abilityOptions" :key="opt" class="dropdown-item">
+              <input type="checkbox" :value="opt" v-model="selectedAbilities"> {{ opt }}
+            </label>
+          </div>
+          <div v-if="isAbilityOpen" class="overlay" @click="isAbilityOpen = false"></div>
         </div>
-        <div v-if="isTraitOpen" class="overlay" @click="isTraitOpen = false"></div>
+
+        <div class="dropdown-wrapper">
+          <div class="dropdown-trigger" @click="toggleEffect">
+            <span>{{ effectButtonText }}</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div v-if="isEffectOpen" class="dropdown-menu">
+            <label v-for="opt in effectOptions" :key="opt" class="dropdown-item">
+              <input type="checkbox" :value="opt" v-model="selectedEffects"> {{ opt }}
+            </label>
+          </div>
+          <div v-if="isEffectOpen" class="overlay" @click="isEffectOpen = false"></div>
+        </div>
       </div>
 
-      <div class="dropdown-wrapper">
-        <div class="dropdown-trigger" @click="toggleAbility">
-          <span>{{ abilityButtonText }}</span>
-          <span class="arrow">▼</span>
+      <div class="filter-group-right">
+        <div class="tool-group logic-group">
+          <span class="logiclable">篩選邏輯</span>
+          <div class="btn-group logic-toggle">
+            <button @click="searchLogic='OR'" :class="{active: searchLogic==='OR'}">OR</button>
+            <button @click="searchLogic='AND'" :class="{active: searchLogic==='AND'}">AND</button>
+          </div>
         </div>
-        <div v-if="isAbilityOpen" class="dropdown-menu">
-          <label v-for="opt in abilityOptions" :key="opt" class="dropdown-item">
-            <input type="checkbox" :value="opt" v-model="selectedAbilities"> {{ opt }}
-          </label>
-        </div>
-        <div v-if="isAbilityOpen" class="overlay" @click="isAbilityOpen = false"></div>
-      </div>
-
-      <div class="dropdown-wrapper">
-        <div class="dropdown-trigger" @click="toggleEffect">
-          <span>{{ effectButtonText }}</span>
-          <span class="arrow">▼</span>
-        </div>
-        <div v-if="isEffectOpen" class="dropdown-menu">
-          <label v-for="opt in effectOptions" :key="opt" class="dropdown-item">
-            <input type="checkbox" :value="opt" v-model="selectedEffects"> {{ opt }}
-          </label>
-        </div>
-        <div v-if="isEffectOpen" class="overlay" @click="isEffectOpen = false"></div>
-      </div>
-
-      <div class="tool-group logic-group">
-        <span class="logiclable">篩選邏輯</span>
-        <div class="btn-group logic-toggle">
-          <button @click="searchLogic='OR'" :class="{active: searchLogic==='OR'}">OR</button>
-          <button @click="searchLogic='AND'" :class="{active: searchLogic==='AND'}">AND</button>
+        <div class="btn-group reset-all-btn">
+          <button @click="resetAll">一鍵清除</button>
         </div>
       </div>
-    <div class="btn-group reset-all-btn">
-      <button @click="resetAll">一鍵清除</button>
-    </div>
     </div>
     
     <p class="hint">找到 {{ filteredCats.length }} 筆資料</p>
@@ -118,7 +136,7 @@
     <div class="pagination-container" v-if="totalPages > 1">
       <div class="pagination">
         <svg v-if="currentPage > 1" @click="prevPage" class="nav-svg" viewBox="0 0 26 26">
-          <path d="M20 4 L6 13 L20 22 Z" fill="#ffc800" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M20 4 L6 13 L20 22 Z" fill="#ffc800" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
         </svg>
         <div v-else class="nav-svg-spacer"></div>
         
@@ -134,7 +152,7 @@
         </div>
 
         <svg v-if="currentPage < totalPages" @click="nextPage" class="nav-svg" viewBox="0 0 26 26">
-          <path d="M6 4 L20 13 L6 22 Z" fill="#ffc800" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M6 4 L20 13 L6 22 Z" fill="#ffc800" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
         </svg>
         <div v-else class="nav-svg-spacer"></div>
       </div>
@@ -161,6 +179,7 @@ import { traitOptions, abilityOptions, effectOptions } from '../config/options'
 
 const { allCats, isLoading, fetchData } = useCatsData()
 
+const rarityOptions = ['基本', 'EX', '稀有', '激稀有', '超激稀有', '傳說稀有'];
 const formMode = ref('highest')
 const searchType = ref('hp')
 const minVal = ref('0')
@@ -168,7 +187,7 @@ const maxVal = ref('')
 
 // 新增：查詢邏輯狀態
 const searchLogic = ref('OR')
-
+const selectedRarity = ref([])
 const selectedTraits = ref([])
 const selectedAbilities = ref([]) 
 const selectedEffects = ref([]) 
@@ -179,6 +198,16 @@ const isEffectOpen = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(10)
 const jumpPage = ref(1)
+
+const toggleRarity = (rarity) => {
+    const index = selectedRarity.value.indexOf(rarity);
+    if (index === -1) {
+        selectedRarity.value.push(rarity); // 沒選過就加入
+    } else {
+        selectedRarity.value.splice(index, 1); // 選過就移除
+    }
+    currentPage.value = 1; // 回到第一頁
+};
 
 const filteredCats = computed(() => {
     if (!allCats.value) return [];
@@ -202,6 +231,7 @@ const filteredCats = computed(() => {
     const results = data.filter(cat => {
         // 修改：根據 searchLogic 判斷標籤篩選邏輯
         let matchTrait, matchAbility, matchEffect;
+        const matchRarity = selectedRarity.value.length === 0 || selectedRarity.value.includes(cat.rarity);
 
         if (searchLogic.value === 'OR') {
           matchTrait = selectedTraits.value.length === 0 || selectedTraits.value.some(t => cat.traits.includes(t));
@@ -220,7 +250,7 @@ const filteredCats = computed(() => {
             isValueMatch = (minVal.value === '' || targetValue >= minVal.value) && 
                            (maxVal.value === '' || targetValue <= maxVal.value);
         }
-        return matchTrait && matchAbility && matchEffect && isValueMatch;
+        return matchRarity && matchTrait && matchAbility && matchEffect && isValueMatch;
     });
 
     return results.slice().sort((a, b) => Number(a.id) - Number(b.id) || a.form - b.form);
@@ -230,6 +260,7 @@ const resetAll = () => {
   searchType.value = 'hp';
   minVal.value = '0';
   maxVal.value = '';
+  selectedRarity.value = [];
   selectedTraits.value = [];
   selectedAbilities.value = [];
   selectedEffects.value = [];
@@ -293,7 +324,7 @@ const goToJumpPage = () => {
 const clearSearch = () => { minVal.value = '0'; maxVal.value = ''; };
 
 // 修改：監聽 searchLogic
-watch([selectedTraits, selectedAbilities, selectedEffects, minVal, maxVal, formMode, searchLogic], () => {
+watch([selectedTraits, selectedAbilities, selectedEffects, minVal, maxVal, formMode, searchLogic, selectedRarity], () => {
     currentPage.value = 1; 
 });
 watch(currentPage, (newVal) => { jumpPage.value = newVal; });
@@ -322,9 +353,8 @@ onMounted(fetchData);
 </script>
 
 <style scoped>
-/* 僅修改背景部分，其餘完全保留原本樣子 */
 .container {
-  background-image: url('/APP_IMG/catsback.png'); /* 替換原本的 #e9fffd */
+  background-image: url('/APP_IMG/catsback.png'); 
   background-repeat: repeat; 
   background-size: 25%;
   background-attachment: fixed;
@@ -342,7 +372,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   white-space: nowrap;
-  background-color: rgba(255, 255, 255, 0.525); /* 確保表格背景是白的，不然格子會透出來 */
+  background-color: rgba(255, 255, 255, 0.525); 
 }
 
 th, td {
@@ -372,7 +402,6 @@ th {
   line-height: 1;
 }
 
-/* 懸停效果微調 */
 .clear-btn:hover {
   background: #bd2130;
 }
@@ -395,16 +424,79 @@ th {
   border: 1px solid #dee2e6;
 }
 
-.tool-group { display: flex; align-items: center; gap: 8px; }
-.label { font-weight: bold; color: #555; font-size: 0.9em; }
-.filter-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; justify-content: center; }
-p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
+.tool-group { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+}
+.label { 
+  font-weight: bold; 
+  color: #555; 
+  font-size: 0.9em; 
+}
+.filter-row { 
+  display: flex; 
+  gap: 15px; 
+  margin-bottom: 15px; 
+  align-items: center; 
+  justify-content: flex-start; 
+}
+.filter-group-left, .filter-group-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap; /* 內容太多時允許換行 */
+}
+p.hint { 
+  color: #333; 
+  font-size: 0.9em; 
+  margin-top: 5px; 
+  font-weight: bold; 
+}
 
-.dropdown-wrapper { position: relative; width: 200px; }
-.dropdown-trigger { border: 1px solid #ccc; padding: 8px 12px; background: white; border-radius: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-.dropdown-menu { position: absolute; top: 105%; left: 0; width: 100%; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); max-height: 250px; overflow-y: auto; z-index: 100; }
-.dropdown-item { display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-.overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 90; }
+.dropdown-wrapper { 
+  position: relative; 
+  width: 200px; 
+}
+.dropdown-trigger { 
+  border: 1px solid #ccc; 
+  padding: 8px 12px; 
+  background: white; 
+  border-radius: 4px; 
+  cursor: pointer; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  user-select: none; 
+}
+.dropdown-menu { 
+  position: absolute; 
+  top: 105%; 
+  left: 0; 
+  width: 100%; 
+  background: white; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+  max-height: 250px; 
+  overflow-y: auto; 
+  z-index: 100; 
+}
+.dropdown-item { 
+  display: flex; 
+  align-items: center; 
+  padding: 8px 10px; 
+  cursor: pointer; 
+  border-bottom: 1px solid #f0f0f0; 
+}
+.overlay { 
+  position: fixed; 
+  top: 0; 
+  left: 0;
+  right: 0; 
+  bottom: 0; 
+  z-index: 90; 
+}
 
 .btn-group button { 
   padding: 5px 10px; 
@@ -414,6 +506,9 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
   font-size: 0.9em; 
   border-radius:10px;
   margin: 2px;
+  height: 32px;
+  line-height: 1;
+  white-space: nowrap;
 }
 .btn-group button:hover { 
   padding: 5px 10px; 
@@ -433,9 +528,27 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
   background: #9e9e9e; 
   color: white; 
 }
-.search-group { background: white; padding: 4px 8px; border: 1px solid #ced4da; border-radius: 20px; }
-.search-select { border: none; background: transparent; color: #0d6efd; font-weight: bold; outline: none; }
-.num-input { width: 50px; border: none; background: #f1f3f5; text-align: center; border-radius: 4px; padding: 2px; }
+.search-group { 
+  background: white; 
+  padding: 4px 8px; 
+  border: 1px solid #ced4da; 
+  border-radius: 20px; 
+}
+.search-select { 
+  border: none; 
+  background: transparent; 
+  color: #0d6efd; 
+  font-weight: bold; 
+  outline: none; 
+}
+.num-input { 
+  width: 50px; 
+  border: none; 
+  background: #f1f3f5; 
+  text-align: center; 
+  border-radius: 4px; 
+  padding: 2px; 
+}
 
 .pagination-container {
   display: flex;
@@ -444,14 +557,49 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
   gap: 15px;
   margin-top: 20px;
 }
-.pagination { display: flex; align-items: center; gap: 20px; }
-.page-numbers { display: flex; gap: 5px; }
-.page-item { padding: 5px 10px; border: 1px solid #ced4da; background: white; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
-.page-item:hover { padding: 5px 10px; border: 1px solid #ced4da; color:white; background: #949494; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
-.page-item.active:hover { padding: 5px 10px; border: 1px solid #ced4da; color:white; background: #949494; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
-.page-item.active { background-color: #cacaca; color: white; }
+.pagination { 
+  display: flex; 
+  align-items: center;
+   gap: 20px; 
+  }
+.page-numbers { 
+  display: flex; 
+  gap: 5px;
+}
+.page-item { 
+  padding: 5px 10px; 
+  border: 1px solid #ced4da; 
+  background: white; 
+  cursor: pointer; 
+  border-radius: 4px; 
+  min-width: 35px; 
+  text-align: center; 
+}
+.page-item:hover { 
+  padding: 5px 10px; 
+  border: 1px solid #ced4da; 
+  color:white; 
+  background: #949494; 
+  cursor: pointer; 
+  border-radius: 4px; 
+  min-width: 35px; 
+  text-align: center; 
+}
+.page-item.active:hover { 
+  padding: 5px 10px; 
+  border: 1px solid #ced4da; 
+  color:white; 
+  background: #949494; 
+  cursor: pointer; 
+  border-radius: 4px; 
+  min-width: 35px; 
+  text-align: center; 
+}
+.page-item.active { 
+  background-color: #cacaca; 
+  color: white; 
+}
 
-/* 三角形樣式修改：36px 並半透明 */
 .nav-svg {
   width: 42px;
   height: 42px;
@@ -468,24 +616,21 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
   width: 36px;
 }
 
-/* 遊戲風格紅色立體按鈕 */
 .go-btn {
   width: 40px;
   height: 40px;
-  border-radius: 50%; /* 圓形 */
-  background: linear-gradient(145deg, #ff3b3b, #d60000); /* 漸層增加立體感 */
+  border-radius: 50%; 
+  background: linear-gradient(145deg, #ff3b3b, #d60000);
   color: white;
   border: none;
   cursor: pointer;
   font-weight: bold;
   font-size: 1em;
-  
-  /* 立體陰影：第一個是按鈕本身的厚度，第二個是投射在地面的陰影 */
   box-shadow: 
     0 4px 0 #990000, 
     0 6px 10px rgba(0, 0, 0, 0.3);
     
-  transition: all 0.1s ease; /* 讓動作更流暢 */
+  transition: all 0.1s ease; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -493,21 +638,17 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
   user-select: none;
 }
 
-/* 懸停時稍微亮一點 */
 .go-btn:hover {
   background: linear-gradient(145deg, #ff5252, #e60000);
 }
 
-/* ★ 按下時的動作 ★ */
 .go-btn:active {
-  /* 減少厚度陰影，並向下移動，營造「壓下去」的感覺 */
   box-shadow: 
     0 1px 0 #990000, 
     0 2px 5px rgba(0, 0, 0, 0.3);
-  transform: translateY(3px); /* 物理位移 */
+  transform: translateY(3px); 
 }
 
-/* 針對輸入框旁邊的佈局微調 */
 .page-jump {
   display: flex;
   align-items: center;
@@ -531,7 +672,7 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
   margin-right: -10px;
   margin-left: 5px;
 }
-/* 新增：篩選邏輯樣式微調 */
+
 .logic-group {
   width:220px;
   border: 1.5px solid #9b9b9b;
@@ -550,5 +691,40 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
 }
 .logic-toggle button:hover {
   padding: 6px 15px;
+}
+
+.rarity{
+  margin-bottom: 10px;
+}
+@media (max-width:600px) {
+  .filter-row {
+      flex-direction: column; 
+      align-items: flex-start; 
+      gap: 10px;
+  }
+  .filter-group-left, .filter-group-right {
+    width: 100%; 
+    justify-content: center;
+  } 
+  .reset-all-btn {
+    flex: 1;            
+    width: auto;
+    margin: 0;
+  }
+  .reset-all-btn button {
+    width: 100%;
+  }
+  .dropdown-wrapper {
+      flex: 1;         
+      min-width: 100px; 
+  }
+  .label{
+    font-size: 0.9em;
+    white-space: nowrap;
+  }
+  .rarity{
+    width: 100%;
+    white-space: nowrap;
+  }
 }
 </style>

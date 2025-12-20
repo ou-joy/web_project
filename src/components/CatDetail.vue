@@ -124,7 +124,6 @@
 </script>
 
 <style scoped>
-/* 背景容器：套用 catdetailsback.png */
 .detail-page-wrapper {
   background-image: url('/APP_IMG/catdetailsback.png');
   background-size: cover;
@@ -173,8 +172,16 @@
   transform: scale(0.95);
 }
 
-.status-msg { text-align: center; color: white; margin-top: 50px; font-size: 1.2rem; text-shadow: 1px 1px 2px #000; }
-.error { color: #ff5252; }
+.status-msg { 
+  text-align: center; 
+  color: white; 
+  margin-top: 50px; 
+  font-size: 1.2rem; 
+  text-shadow: 1px 1px 2px #000; 
+}
+.error { 
+  color: #ff5252; 
+}
 
 .main-title {
   text-align: center;
@@ -184,7 +191,6 @@
   text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
-/* 卡片樣式：調整為半透明毛玻璃感，配合背景 */
 .form-card {
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
@@ -213,7 +219,11 @@
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
 
-.card-header h2 { margin: 0; font-size: 1.4rem; color: #333; }
+.card-header h2 { 
+  margin: 0; 
+  font-size: 1.4rem; 
+  color: #333; 
+}
 
 .card-body {
   display: flex;
@@ -257,12 +267,28 @@
   margin-bottom: 20px;
 }
 
-.stat-item { display: flex; flex-direction: column; }
-.stat-item label { font-size: 0.8rem; color: #666; margin-bottom: 4px; }
-.stat-item span { font-size: 1.1rem; font-weight: bold; }
-.stat-item.dps span { color: #d32f2f; }
+.stat-item { 
+  display: flex; 
+  flex-direction: column; 
+}
+.stat-item label { 
+  font-size: 0.8rem; 
+  color: #666; 
+  margin-bottom: 4px; 
+}
+.stat-item span { 
+  font-size: 1.1rem; 
+  font-weight: bold; 
+}
+.stat-item.dps span { 
+  color: #d32f2f; 
+}
 
-hr { border: 0; border-top: 1px solid #ddd; margin: 15px 0; }
+hr { 
+  border: 0; 
+  border-top: 1px solid #ddd; 
+  margin: 15px 0; 
+}
 
 .badge {
   display: inline-block;
@@ -272,6 +298,14 @@ hr { border: 0; border-top: 1px solid #ddd; margin: 15px 0; }
   font-size: 0.9rem;
   font-weight: bold;
 }
-.badge.trait { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
-.badge.ability { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+.badge.trait { 
+  background: #e3f2fd; 
+  color: #1976d2; 
+  border: 1px solid #bbdefb; 
+}
+.badge.ability { 
+  background: #ffebee; 
+  color: #c62828; 
+  border: 1px solid #ffcdd2; 
+}
 </style>

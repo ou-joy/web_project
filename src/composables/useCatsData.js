@@ -2,6 +2,15 @@ import { ref, shallowRef } from 'vue';
 import { TRAIT_MAP, KEY_MAPPING, IMMUNE_MAPPING } from '../config/mappings'
 import { abilityOptions, effectOptions } from '../config/options'
 
+const RARITY_MAP = {
+    0: '基本',
+    1: 'EX',
+    2: '稀有',
+    3: '激稀有',
+    4: '超激稀有',
+    5: '傳說稀有'
+};
+
 export function useCatsData() {
     const allCats = shallowRef([]);          
     const isLoading = ref(true);
@@ -43,7 +52,8 @@ export function useCatsData() {
 
                 return {
                     id: item.id,
-                    form: item.form,    
+                    form: item.form,
+                    rarity: RARITY_MAP[item.rarity],    
                     id_form: item.idform,
                     name: item.name_cn || item.name_jp, 
                     hp: (item.hp*2.5),
