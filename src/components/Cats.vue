@@ -734,7 +734,6 @@ p.hint {
   }
   .rarity{
     width: 100%;
-    white-space: nowrap;
   }
 }
 </style>
