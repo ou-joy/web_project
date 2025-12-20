@@ -1,5 +1,6 @@
 <template>
   <div :style="backgroundStyle" class="home-wrapper">
+    <div class="fixed-bg" :style="backgroundStyle"></div>
     <div class="home">
       <h1 class="main-title">貓咪大戰爭圖鑑</h1>
       
@@ -43,8 +44,6 @@ const backgroundStyle = computed(() => {
     backgroundSize: 'cover',
     backgroundPosition: 'center bottom',
     backgroundRepeat: 'no-repeat',
-    backgroundAttachment: 'fixed',
-    minHeight: '100vh',
     transition: 'background-image 1.2s ease-in-out'
   }
 })
@@ -66,11 +65,22 @@ onUnmounted(() => {
 .home-wrapper {
   width: 100%;
   min-height: 100vh;
+  position: relative;
 }
-
+.fixed-bg {
+  position: fixed; 
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-position: center bottom;
+  background-size: cover;
+}
 .home {
   text-align: center;
   padding-top: 20vh; 
+  position: relative; 
+  z-index: 1;
 }
 
 .main-title {

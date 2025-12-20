@@ -355,15 +355,24 @@ onMounted(fetchData);
 
 <style scoped>
 .container {
-  background-image: url('/APP_IMG/catsback.png'); 
-  background-repeat: repeat; 
-  background-size: 25%;
-  background-attachment: fixed;
+  position: relative;
   min-height: 100vh;
   padding: 20px;
   font-family: "Microsoft JhengHei", sans-serif;
+  z-index: 1;
 }
-
+.container::before {
+  content: "";
+  background-image: url('/APP_IMG/catsback.png'); 
+  background-repeat: repeat; 
+  background-size: 25%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; 
+}
 .table-page { 
   border-radius: 8px;
   overflow-x: auto; 

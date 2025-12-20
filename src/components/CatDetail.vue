@@ -125,14 +125,25 @@
 
 <style scoped>
 .detail-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+.detail-page-wrapper::before {
+  content: "";
   background-image: url('/APP_IMG/catdetailsback.png');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
-  min-height: 100vh;
+  background-repeat: no-repeat;
+  position: fixed; 
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  z-index: -1; 
+  will-change: transform; 
 }
-
 .detail-page {
   max-width: 900px;
   margin: 0 auto;
