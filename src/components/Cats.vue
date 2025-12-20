@@ -117,7 +117,10 @@
 
     <div class="pagination-container" v-if="totalPages > 1">
       <div class="pagination">
-        <button @click="prevPage" :disabled="currentPage === 1">上一頁</button>
+        <svg v-if="currentPage > 1" @click="prevPage" class="nav-svg" viewBox="0 0 26 26">
+          <path d="M20 4 L6 13 L20 22 Z" fill="#ffc800" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <div v-else class="nav-svg-spacer"></div>
         
         <div class="page-numbers">
           <span 
@@ -130,7 +133,10 @@
           </span>
         </div>
 
-        <button @click="nextPage" :disabled="currentPage === totalPages">下一頁</button>
+        <svg v-if="currentPage < totalPages" @click="nextPage" class="nav-svg" viewBox="0 0 26 26">
+          <path d="M6 4 L20 13 L6 22 Z" fill="#ffc800" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <div v-else class="nav-svg-spacer"></div>
       </div>
 
       <div class="page-jump">
@@ -391,7 +397,7 @@ th {
 
 .tool-group { display: flex; align-items: center; gap: 8px; }
 .label { font-weight: bold; color: #555; font-size: 0.9em; }
-.filter-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
+.filter-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; justify-content: center; }
 p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
 
 .dropdown-wrapper { position: relative; width: 200px; }
@@ -438,12 +444,30 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
   gap: 15px;
   margin-top: 20px;
 }
-.pagination { display: flex; align-items: center; gap: 10px; }
+.pagination { display: flex; align-items: center; gap: 20px; }
 .page-numbers { display: flex; gap: 5px; }
 .page-item { padding: 5px 10px; border: 1px solid #ced4da; background: white; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
 .page-item:hover { padding: 5px 10px; border: 1px solid #ced4da; color:white; background: #949494; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
 .page-item.active:hover { padding: 5px 10px; border: 1px solid #ced4da; color:white; background: #949494; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
 .page-item.active { background-color: #cacaca; color: white; }
+
+/* 三角形樣式修改：36px 並半透明 */
+.nav-svg {
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: transform 0.1s, opacity 0.1s;
+}
+
+.nav-svg:hover {
+  opacity: 0.7;
+}
+
+.nav-svg-spacer {
+  width: 36px;
+}
+
 /* 遊戲風格紅色立體按鈕 */
 .go-btn {
   width: 40px;
@@ -515,6 +539,10 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
   border-radius: 8px;
   margin-right: 5px;
   padding-left: 6px;
+  display: inline-flex;
+}
+.logic-toggle {
+  display: inline-flex;
 }
 .logic-toggle button {
   width: 70px;
@@ -522,11 +550,5 @@ p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
 }
 .logic-toggle button:hover {
   padding: 6px 15px;
-}
-.logic-group{
-  display: inline-flex;
-}
-.logic-toggle{
-  display: inline-flex;
 }
 </style>
