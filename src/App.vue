@@ -57,18 +57,23 @@ const count = ref(0)
     color: #ffffff;
   }
 
-  /* 當前頁面高亮 */
   .router-link-active {
     background-color: #0d51fd;
     color: white !important;
   }
 
-  /* 全域重置 */
   a {
     text-decoration: none;
   }
-
-  body {
-    margin: 0; /* 確保畫面上方沒有預設間隙 */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; 
   }
+  #app {
+  width: 100%;
+  height: 100%;
+}
 </style>
