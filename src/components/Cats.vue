@@ -364,8 +364,9 @@ onMounted(fetchData);
 .container::before {
   content: "";
   background-image: url('/APP_IMG/catsback.png'); 
-  background-repeat: repeat; 
-  background-size: 150px; 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: fixed;
   top: 0;
   left: 0;
@@ -373,7 +374,6 @@ onMounted(fetchData);
   height: 100%;
   z-index: -1; 
   will-change: transform; 
-  pointer-events: none;
 }
 .table-page { 
   border-radius: 8px;
