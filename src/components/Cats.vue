@@ -68,6 +68,14 @@
         </div>
         <div v-if="isEffectOpen" class="overlay" @click="isEffectOpen = false"></div>
       </div>
+
+      <div class="tool-group logic-group">
+        <span class="logiclable">篩選邏輯</span>
+        <div class="btn-group logic-toggle">
+          <button @click="searchLogic='OR'" :class="{active: searchLogic==='OR'}">OR</button>
+          <button @click="searchLogic='AND'" :class="{active: searchLogic==='AND'}">AND</button>
+        </div>
+      </div>
     </div>
     
     <p class="hint">找到 {{ filteredCats.length }} 筆資料</p>
@@ -149,6 +157,9 @@ const searchType = ref('hp')
 const minVal = ref('0')
 const maxVal = ref('')
 
+// 新增：查詢邏輯狀態
+const searchLogic = ref('OR')
+
 const selectedTraits = ref([])
 const selectedAbilities = ref([]) 
 const selectedEffects = ref([]) 
@@ -180,9 +191,19 @@ const filteredCats = computed(() => {
     }
 
     const results = data.filter(cat => {
-        const matchTrait = selectedTraits.value.length === 0 || selectedTraits.value.some(t => cat.traits.includes(t));
-        const matchAbility = selectedAbilities.value.length === 0 || selectedAbilities.value.some(opt => cat.abilities.includes(opt));
-        const matchEffect = selectedEffects.value.length === 0 || selectedEffects.value.some(opt => cat.effects.includes(opt));
+        // 修改：根據 searchLogic 判斷標籤篩選邏輯
+        let matchTrait, matchAbility, matchEffect;
+
+        if (searchLogic.value === 'OR') {
+          matchTrait = selectedTraits.value.length === 0 || selectedTraits.value.some(t => cat.traits.includes(t));
+          matchAbility = selectedAbilities.value.length === 0 || selectedAbilities.value.some(opt => cat.abilities.includes(opt));
+          matchEffect = selectedEffects.value.length === 0 || selectedEffects.value.some(opt => cat.effects.includes(opt));
+        } else {
+          // AND 邏輯：必須包含所有選中的標籤
+          matchTrait = selectedTraits.value.length === 0 || selectedTraits.value.every(t => cat.traits.includes(t));
+          matchAbility = selectedAbilities.value.length === 0 || selectedAbilities.value.every(opt => cat.abilities.includes(opt));
+          matchEffect = selectedEffects.value.length === 0 || selectedEffects.value.every(opt => cat.effects.includes(opt));
+        }
         
         let isValueMatch = true;
         if (minVal.value !== '' || maxVal.value !== '') {
@@ -247,7 +268,8 @@ const goToJumpPage = () => {
 
 const clearSearch = () => { minVal.value = '0'; maxVal.value = ''; };
 
-watch([selectedTraits, selectedAbilities, selectedEffects, minVal, maxVal, formMode], () => {
+// 修改：監聽 searchLogic
+watch([selectedTraits, selectedAbilities, selectedEffects, minVal, maxVal, formMode, searchLogic], () => {
     currentPage.value = 1; 
 });
 watch(currentPage, (newVal) => { jumpPage.value = newVal; });
@@ -276,88 +298,39 @@ onMounted(fetchData);
 </script>
 
 <style scoped>
-/* 核心容器樣式恢復 */
+/* 僅修改背景部分，其餘完全保留原本樣子 */
 .container {
-  background-color: #e9fffd;
+  background-image: url('/APP_IMG/catsback.png'); /* 替換原本的 #e9fffd */
+  background-repeat: repeat; 
+  background-size: 25%;
+  background-attachment: fixed;
+  min-height: 100vh;
   padding: 20px;
   font-family: "Microsoft JhengHei", sans-serif;
 }
 
-/* 表格原始樣式恢復 */
-.table-page { overflow-x: auto; }
+.table-page { 
+  border-radius: 8px;
+  overflow-x: auto; 
+}
 
 table {
   width: 100%;
   border-collapse: collapse;
   white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.525); /* 確保表格背景是白的，不然格子會透出來 */
 }
 
 th, td {
-  border: 1px solid #ccc;
+  border: 1.5px solid #aaaaaa;
   padding: 8px;
   text-align: left;
 }
 
 th { 
-  background-color: #f0f0f0; 
+  background-color: #d99426; 
 }
 
-.img-placeholder {
-  display: inline-block; width: 100px; height: 80px;
-  background: #eee; text-align: center; line-height: 30px;
-  font-size: 12px;
-}
-
-/* 篩選與工具列樣式 */
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-items: center;
-  background-color: #f8f9fa;
-  padding: 10px 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  border: 1px solid #dee2e6;
-}
-
-.tool-group { display: flex; align-items: center; gap: 8px; }
-.label { font-weight: bold; color: #555; font-size: 0.9em; }
-.filter-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
-p.hint { color: gray; font-size: 0.9em; margin-top: 5px; }
-
-/* 下拉選單 */
-.dropdown-wrapper { position: relative; width: 200px; }
-.dropdown-trigger { border: 1px solid #ccc; padding: 8px 12px; background: white; border-radius: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-.dropdown-menu { position: absolute; top: 105%; left: 0; width: 100%; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); max-height: 250px; overflow-y: auto; z-index: 100; }
-.dropdown-item { display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-.overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 90; }
-
-/* 按鈕與搜尋 */
-.btn-group button { 
-  padding: 5px 10px; 
-  border: 1px solid #ced4da; 
-  background: white; 
-  cursor: pointer; 
-  font-size: 0.9em; 
-  border-radius:10px;
-  margin: 2px;
-}
-.btn-group button:hover{
-  background: #9e9e9e;
-  color: #ffffff;
-}
-.btn-group button.active { 
-  background: #0d51fd; 
-  color: white; 
-}
-.btn-group button.active:hover { 
-  background: #9e9e9e;
-  color: #ffffff;
-}
-.search-group { background: white; padding: 4px 8px; border: 1px solid #ced4da; border-radius: 20px; }
-.search-select { border: none; background: transparent; color: #0d6efd; font-weight: bold; outline: none; }
-.num-input { width: 50px; border: none; background: #f1f3f5; text-align: center; border-radius: 4px; padding: 2px; }
 .clear-btn {
   background: #dc3545;
   color: white;
@@ -380,7 +353,66 @@ p.hint { color: gray; font-size: 0.9em; margin-top: 5px; }
   background: #bd2130;
 }
 
-/* 整合後的分頁樣式 */
+.img-placeholder {
+  display: inline-block; width: 100px; height: 80px;
+  background: #eee; text-align: center; line-height: 30px;
+  font-size: 12px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  background-color: #f8f9fae4;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #dee2e6;
+}
+
+.tool-group { display: flex; align-items: center; gap: 8px; }
+.label { font-weight: bold; color: #555; font-size: 0.9em; }
+.filter-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
+p.hint { color: #333; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
+
+.dropdown-wrapper { position: relative; width: 200px; }
+.dropdown-trigger { border: 1px solid #ccc; padding: 8px 12px; background: white; border-radius: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+.dropdown-menu { position: absolute; top: 105%; left: 0; width: 100%; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); max-height: 250px; overflow-y: auto; z-index: 100; }
+.dropdown-item { display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+.overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 90; }
+
+.btn-group button { 
+  padding: 5px 10px; 
+  border: 1px solid #ced4da; 
+  background: white; 
+  cursor: pointer; 
+  font-size: 0.9em; 
+  border-radius:10px;
+  margin: 2px;
+}
+.btn-group button:hover { 
+  padding: 5px 10px; 
+  border: 1px solid #ced4da; 
+  color: white;
+  background: #9e9e9e; 
+  cursor: pointer; 
+  font-size: 0.9em; 
+  border-radius:10px;
+  margin: 2px;
+}
+.btn-group button.active { 
+  background: #0d51fd; 
+  color: white; 
+}
+.btn-group button.active:hover { 
+  background: #9e9e9e; 
+  color: white; 
+}
+.search-group { background: white; padding: 4px 8px; border: 1px solid #ced4da; border-radius: 20px; }
+.search-select { border: none; background: transparent; color: #0d6efd; font-weight: bold; outline: none; }
+.num-input { width: 50px; border: none; background: #f1f3f5; text-align: center; border-radius: 4px; padding: 2px; }
+
 .pagination-container {
   display: flex;
   flex-direction: column;
@@ -388,56 +420,10 @@ p.hint { color: gray; font-size: 0.9em; margin-top: 5px; }
   gap: 15px;
   margin-top: 20px;
 }
-
-.pagination {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.page-numbers {
-  display: flex;
-  gap: 5px;
-}
-
-.page-item {
-  padding: 5px 10px;
-  border: 1px solid #ced4da;
-  background: white;
-  cursor: pointer;
-  border-radius: 4px;
-  min-width: 35px;
-  text-align: center;
-}
-
-.page-item.active {
-  background-color: #949494;
-  color: white;
-  border-color: #494949;
-}
-
-.page-item.dots {
-  border: none;
-  cursor: default;
-  background: transparent;
-}
-
-.page-jump {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9em;
-}
-
-.jump-input {
-  font-size: 1em;
-  width: 60px;
-  padding: 4px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  text-align: center;
-}
-
+.pagination { display: flex; align-items: center; gap: 10px; }
+.page-numbers { display: flex; gap: 5px; }
+.page-item { padding: 5px 10px; border: 1px solid #ced4da; background: white; cursor: pointer; border-radius: 4px; min-width: 35px; text-align: center; }
+.page-item.active { background-color: #949494; color: white; }
 /* 遊戲風格紅色立體按鈕 */
 .go-btn {
   width: 40px;
@@ -482,15 +468,39 @@ p.hint { color: gray; font-size: 0.9em; margin-top: 5px; }
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 0.9em;
+  font-size: 1em;
   font-weight: bold;
 }
 
 .jump-input {
-  width: 50px;
-  height: 30px;
+  width: 45px;
+  height: 27px;
   border: 2px solid #ced4da;
   border-radius: 8px;
   text-align: center;
+}
+.logiclable {
+  width: 100px;
+  font-weight: bold; 
+  color: #2f2f2f; 
+  font-size: 1em; 
+  margin-right: -10px;
+  margin-left: 5px;
+}
+/* 新增：篩選邏輯樣式微調 */
+.logic-group {
+  width:170px;
+  border: 1.5px solid #9b9b9b;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  margin-right: 5px;
+  padding-left: 6px;
+}
+.logic-toggle button {
+  width: 70px;
+  padding: 6px 15px;
+}
+.logic-toggle button:hover {
+  padding: 6px 15px;
 }
 </style>
