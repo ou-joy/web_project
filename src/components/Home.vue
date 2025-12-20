@@ -19,17 +19,17 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-// --- 背景切換邏輯 ---
+
 
 // 取得當前小時
 const currentHour = ref(new Date().getHours())
 let timer = null
-
+//背景切換
 const backgroundStyle = computed(() => {
   const hour = currentHour.value
   let bgPath = ''
 
-  // 7~17 使用 day / 19~5 使用 night / 5~7 & 17~19 使用 sun
+  // 7~17 使用 day 19~5;使用 night;5~7 & 17~19 使用 sun
   if (hour >= 7 && hour < 17) {
     bgPath = '/APP_IMG/day.png'
   } else if (hour >= 19 || hour < 5) {
@@ -62,7 +62,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 確保背景鋪滿全螢幕 */
+
 .home-wrapper {
   width: 100%;
   min-height: 100vh;
@@ -89,7 +89,6 @@ onUnmounted(() => {
   display: inline-block;
 }
 
-/* ★ 木板按鈕主體 ★ */
 .wood-button {
   width: 320px;
   height: 120px;

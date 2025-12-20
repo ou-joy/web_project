@@ -228,19 +228,21 @@ const paginatedCats = computed(() => {
 });
 
 const setPage = (page) => {
-    if (page === '...') return;
-    currentPage.value = page;
-    window.scrollTo(0, 0);
+  if (page === '...') return;
+  currentPage.value = page;
+  window.scrollTo(0, 0);
 };
 
-const nextPage = () => { if (currentPage.value < totalPages.value) setPage(currentPage.value + 1); };
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) setPage(currentPage.value + 1); 
+};
 const prevPage = () => { if (currentPage.value > 1) setPage(currentPage.value - 1); };
 
 const goToJumpPage = () => {
-    let page = Math.floor(jumpPage.value);
-    if (page < 1) page = 1;
-    if (page > totalPages.value) page = totalPages.value;
-    setPage(page);
+  let page = Math.floor(jumpPage.value);
+  if (page < 1) page = 1;
+  if (page > totalPages.value) page = totalPages.value;
+  setPage(page);
 };
 
 const clearSearch = () => { minVal.value = '0'; maxVal.value = ''; };
@@ -250,13 +252,25 @@ watch([selectedTraits, selectedAbilities, selectedEffects, minVal, maxVal, formM
 });
 watch(currentPage, (newVal) => { jumpPage.value = newVal; });
 
-const traitButtonText = computed(() => selectedTraits.value.length === 0 ? '選擇屬性...' : `屬性 (${selectedTraits.value.length})`);
-const abilityButtonText = computed(() => selectedAbilities.value.length === 0 ? '選擇能力...' : `能力 (${selectedAbilities.value.length})`);
-const effectButtonText = computed(() => selectedEffects.value.length === 0 ? '選擇效果...' : `效果 (${selectedEffects.value.length})`);
+const traitButtonText = computed(() => 
+  selectedTraits.value.length === 0 ? '選擇屬性...' : `屬性 (${selectedTraits.value.length})`
+);
+const abilityButtonText = computed(() => 
+  selectedAbilities.value.length === 0 ? '選擇能力...' : `能力 (${selectedAbilities.value.length})`
+);
+const effectButtonText = computed(() => 
+  selectedEffects.value.length === 0 ? '選擇效果...' : `效果 (${selectedEffects.value.length})`
+);
 
-const toggleTrait = () => { isTraitOpen.value = !isTraitOpen.value; isAbilityOpen.value = isEffectOpen.value = false; };
-const toggleAbility = () => { isAbilityOpen.value = !isAbilityOpen.value; isTraitOpen.value = isEffectOpen.value = false; };
-const toggleEffect = () => { isEffectOpen.value = !isEffectOpen.value; isTraitOpen.value = isAbilityOpen.value = false; };
+const toggleTrait = () => { 
+  isTraitOpen.value = !isTraitOpen.value; isAbilityOpen.value = isEffectOpen.value = false; 
+};
+const toggleAbility = () => { 
+  isAbilityOpen.value = !isAbilityOpen.value; isTraitOpen.value = isEffectOpen.value = false;
+};
+const toggleEffect = () => { 
+  isEffectOpen.value = !isEffectOpen.value; isTraitOpen.value = isAbilityOpen.value = false; 
+};
 
 onMounted(fetchData);
 </script>
@@ -284,25 +298,27 @@ th, td {
   text-align: left;
 }
 
-th { background-color: #f0f0f0; }
+th { 
+  background-color: #f0f0f0; 
+}
 
 .img-placeholder {
-    display: inline-block; width: 100px; height: 80px;
-    background: #eee; text-align: center; line-height: 30px;
-    font-size: 12px;
+  display: inline-block; width: 100px; height: 80px;
+  background: #eee; text-align: center; line-height: 30px;
+  font-size: 12px;
 }
 
 /* 篩選與工具列樣式 */
 .toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-    background-color: #f8f9fa;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #dee2e6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #dee2e6;
 }
 
 .tool-group { display: flex; align-items: center; gap: 8px; }
@@ -347,60 +363,60 @@ p.hint { color: gray; font-size: 0.9em; margin-top: 5px; }
 
 /* 整合後的分頁樣式 */
 .pagination-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .pagination {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .page-numbers {
-    display: flex;
-    gap: 5px;
+  display: flex;
+  gap: 5px;
 }
 
 .page-item {
-    padding: 5px 10px;
-    border: 1px solid #ced4da;
-    background: white;
-    cursor: pointer;
-    border-radius: 4px;
-    min-width: 35px;
-    text-align: center;
+  padding: 5px 10px;
+  border: 1px solid #ced4da;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 35px;
+  text-align: center;
 }
 
 .page-item.active {
-    background-color: #949494;
-    color: white;
-    border-color: #494949;
+  background-color: #949494;
+  color: white;
+  border-color: #494949;
 }
 
 .page-item.dots {
-    border: none;
-    cursor: default;
-    background: transparent;
+  border: none;
+  cursor: default;
+  background: transparent;
 }
 
 .page-jump {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9em;
 }
 
 .jump-input {
-    font-size: 1em;
-    width: 60px;
-    padding: 4px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    text-align: center;
+  font-size: 1em;
+  width: 60px;
+  padding: 4px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  text-align: center;
 }
 
 /* 遊戲風格紅色立體按鈕 */

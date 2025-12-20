@@ -6,29 +6,27 @@ export function useCatsData() {
     const allCats = shallowRef([]);          
     const isLoading = ref(true);
 
-    // 抓取並轉換資料
     const fetchData = async () => {
         isLoading.value = true;
         try {
-            // 讀取json
             const res = await fetch('/battle_cats_characters.json');
             if (!res.ok) throw new Error('找不到 JSON 檔案');
             const jsonData = await res.json();
 
-            // ★ 資料轉換核心邏輯
+            // 資料轉換核心邏輯
             const processedList= jsonData.map(item => {
                 
-                // 1. 處理能力：檢查所有 ability_ 開頭的欄位，如果是 1 就加入清單
+                // 處理能力：檢查所有 ability_ 開頭的欄位，如果是 1 就加入清單
                 const traits = [];
                 const abilities = [];
                 const effects = [];
 
-                // A. 處理屬性
+                //屬性
                 for (const [key, label] of Object.entries(TRAIT_MAP)) {
                     if (item[key] && item[key] !== 0) traits.push(label);
                 }
 
-                // B. 處理能力與效果 (KEY_MAPPING)
+                //能力與效果
                 for (const [key, label] of Object.entries(KEY_MAPPING)) {
                     if (item[key] && item[key] !== 0) {
                         if (abilityOptions.includes(label)) abilities.push(label);
@@ -36,19 +34,18 @@ export function useCatsData() {
                     }
                 }
 
-                // C. 處理無效能力 (IMMUNE_MAPPING) -> 視為能力
+                //能力
                 for (const [key, label] of Object.entries(IMMUNE_MAPPING)) {
                     if (item[key] && item[key] !== 0) {
                         abilities.push(label);
                     }
                 }
 
-                // 2. 回傳整理好的物件
                 return {
                     id: item.id,
                     form: item.form,    
                     id_form: item.idform,
-                    name: item.name_cn || item.name_jp, // 優先顯示中文，沒有就顯示日文
+                    name: item.name_cn || item.name_jp, 
                     hp: (item.hp*2.5),
                     atk: (item.attack*2.5), 
                     range: item.range,
@@ -56,7 +53,6 @@ export function useCatsData() {
                     traits: traits,
                     abilities: abilities, 
                     effects: effects, 
-                    // 為了表格顯示方便，合併所有能力文字
                     all_abilities: [...effects, ...abilities]
                 };
             });
