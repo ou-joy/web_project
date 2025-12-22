@@ -18,35 +18,52 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-
-
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
 // 取得當前小時
-const currentHour = ref(new Date().getHours())
+const currentHour = ref(new Date().getHours())  
+const currentBgUrl = ref('')
 let timer = null
+
+const targetBgPath = computed(() => {
+  const hour = currentHour.value
+  // 7~17 使用 day; 19~5 使用 night; 5~7 & 17~19 使用 sun
+  if (hour >= 7 && hour < 17) {
+    return '/APP_IMG/day.png'
+  } else if (hour >= 19 || hour < 5) {
+    return '/APP_IMG/night.png'
+  } else {
+    return '/APP_IMG/sun.png'
+  }
+})
+
 //背景切換
 const backgroundStyle = computed(() => {
-  const hour = currentHour.value
-  let bgPath = ''
-
-  // 7~17 使用 day 19~5;使用 night;5~7 & 17~19 使用 sun
-  if (hour >= 7 && hour < 17) {
-    bgPath = '/APP_IMG/day.png'
-  } else if (hour >= 19 || hour < 5) {
-    bgPath = '/APP_IMG/night.png'
-  } else {
-    bgPath = '/APP_IMG/sun.png'
-  }
-
   return {
-    backgroundImage: `url(${bgPath})`,
+    backgroundImage:currentBgUrl.value ? `url(${currentBgUrl.value})` : 'none',
     backgroundSize: 'cover',
     backgroundPosition: 'center bottom',
     backgroundRepeat: 'no-repeat',
-    transition: 'background-image 1.2s ease-in-out'
   }
 })
+
+const preloadBackground = (path) => {
+  // 如果路徑沒變，就不重新下載
+  if (path === currentBgUrl.value) return
+
+  const img = new Image()
+  img.src = path
+  
+  img.onload = () => {
+    // 圖片下載好了 更新畫面
+    currentBgUrl.value = path
+  }
+}
+
+// 監聽時間或路徑變化 當需要換圖 執行預載
+watch(targetBgPath, (newPath) => {
+  preloadBackground(newPath)
+}, { immediate: true })
 
 // 每秒更新一次時間，確保切換即時
 onMounted(() => {
