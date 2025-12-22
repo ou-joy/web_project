@@ -10,7 +10,7 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
     const isLoading = ref(true);
 
     
-    // 1. Frame 轉秒數 (貓戰是 30 frame = 1秒)
+    // Frame 轉秒數 (貓戰是 30 frame = 1秒)
     const frameToSec = (frames) => {
         if(!frames) return 0;
         return (frames / 30).toFixed(2);
@@ -23,14 +23,14 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
             return cdseconds;
     }
 
-    // 2. 計算 DPS
+    // 計算 DPS
     const calculateDPS = (cat) => {
         if (!cat.attack_freq_frames || cat.attack_freq_frames === 0) return 0;
         const seconds = cat.attack_freq_frames / 30;
         return Math.round(cat.attack / seconds);
     };
 
-    // 3. 取得最後型態的名字 (當標題用)
+    //取得最後型態的名字 (當標題用)
     const getAllName = () => {
         if (catForms.value.length === 0) return '';
         return catForms.value
@@ -38,7 +38,7 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
             .join('->');
     };
 
-    // 4. 解析屬性 (Traits)
+    //解析屬性 (Traits)
     const getTraits = (cat) => {
         const list = [];
         for (const [key, label] of Object.entries(traitsMap)) {
@@ -47,7 +47,7 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
         return list;
     };
 
-    // 5. 解析能力 (Abilities)
+    //解析能力 (Abilities)
     const getAbilities = (cat) => {
         const list = [];
         for (const [key, label] of Object.entries(abilitiesMap)) {
@@ -56,7 +56,6 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
         return list;
     };
 
-    // --- 抓取資料 ---
     const fetchDetail = async () => {
         isLoading.value = true;
         try {
@@ -65,8 +64,7 @@ export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
             
             const data = await res.json();
 
-            // ★ 核心邏輯：找出 id_main 等於網址參數的所有資料
-            // 使用 == 來允許字串與數字比對 (例如 "1" == 1)
+            // 找出 id_main 等於網址參數的所有資料
             const matched = data.filter(c => c.id == routeId);
 
             // 依照 form (1, 2, 3) 排序

@@ -1,16 +1,16 @@
 // 翻譯對照表
 // 左JSON英文欄位 右中文
 export const TRAIT_MAP = {
-'trait_red': '紅色敵人',
-'trait_floating': '飄浮敵人',
-'trait_black': '黑色敵人',
-'trait_metal': '鋼鐵敵人',
-'trait_traitless': '無屬性',
-'trait_angel': '天使',
-'trait_alien': '異星戰士',
-'trait_zombie': '不死生物',
-'trait_ancient': '古代種',
-'trait_devil': '惡魔'
+    'trait_red': '紅色敵人',
+    'trait_floating': '飄浮敵人',
+    'trait_black': '黑色敵人',
+    'trait_metal': '鋼鐵敵人',
+    'trait_traitless': '無屬性',
+    'trait_angel': '天使',
+    'trait_alien': '異星戰士',
+    'trait_zombie': '不死生物',
+    'trait_ancient': '古代種',
+    'trait_devil': '惡魔'
 };
 export const KEY_MAPPING = {
     // 能力類 (Abilities)
