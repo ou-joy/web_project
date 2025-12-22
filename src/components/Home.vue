@@ -10,7 +10,7 @@
         </div>
       </router-link>
 
-      <a href="" target="_blank" class="about-link">
+      <a href="https://www.canva.com/design/DAG31gQ7qjE/FB8cugbH_Ee0p41NnBVwWA/view?utm_content=DAG31gQ7qjE&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h45a4076953" target="_blank" class="about-link">
         <p>about us</p>
       </a>
     </div>
