@@ -1,7 +1,6 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
-// --- 工具函式 ---
 export function useCatDetail({ traitsMap = {}, abilitiesMap = {} } = {}) {
     const route = useRoute();
     const routeId = route.params.id; // 取得網址上的 ID

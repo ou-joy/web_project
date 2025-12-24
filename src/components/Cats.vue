@@ -14,6 +14,18 @@
           <button @click="formMode='3'" :class="{active: formMode==='3'}">三階</button>
         </div>
       </div>
+      <div class="tool-group">
+        <div class="btn-group">
+          <span class="label">收藏</span>
+          <button 
+            @click="showOwnedOnly = !showOwnedOnly" 
+            class="toggle-btn"
+            :class="{ active: showOwnedOnly }"
+          >
+            {{ showOwnedOnly ? '顯示全部' : '只顯示已擁有' }}
+          </button>
+        </div>
+      </div>
 
       <div class="tool-group search-group">
         <select v-model="searchType" class="search-select">
@@ -119,10 +131,20 @@
           <tr v-for="cat in paginatedCats" :key="cat.id_form">
             <td>{{ cat.id_form }}</td>
             <td>
-              <router-link :to="'/cat/' + cat.id" class="img-link">
-                <img :src="getPicture(cat.id, cat.form)" class="img-placeholder">
-              </router-link>
-            </td>
+              <div class="img-wrapper">
+                <router-link :to="'/cat/' + cat.id" class="img-link">
+                  <img :src="getPicture(cat.id, cat.form)" class="img-placeholder">
+                </router-link>
+
+                <div 
+                  class="star-overlay" 
+                  :class="{ active: ownedCatIds.has(cat.id) }"
+                  @click.prevent="toggleOwned(cat.id)"
+                >
+                  {{ ownedCatIds.has(cat.id) ? '★' : '☆' }}
+                </div>
+              </div>
+            </td>   
             <td>{{ cat.name }}</td>
             <td>{{ cat.hp }}</td>
             <td>{{ cat.atk }}</td>
@@ -198,6 +220,10 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const jumpPage = ref(1)
 
+ //local storage
+const ownedCatIds = ref(new Set())
+const showOwnedOnly = ref(false)
+
 const toggleRarity = (rarity) => {
     const index = selectedRarity.value.indexOf(rarity);
     if (index === -1) {
@@ -226,7 +252,9 @@ const filteredCats = computed(() => {
         const targetForm = parseInt(formMode.value);
         data = data.filter(item => item.form === targetForm);
     }
-
+    if (showOwnedOnly.value) {
+      data = data.filter(cat => ownedCatIds.value.has(cat.id))
+    }
     const results = data.filter(cat => {
         let matchTrait, matchAbility, matchEffect;
         const matchRarity = selectedRarity.value.length === 0 || selectedRarity.value.includes(cat.rarity);
@@ -268,6 +296,7 @@ const resetAll = () => {
   isTraitOpen.value = false;
   isAbilityOpen.value = false;
   isEffectOpen.value = false;
+  showOwnedOnly.value = false;
 };
 
 //切換pages
@@ -350,7 +379,26 @@ const toggleEffect = () => {
   isTraitOpen.value = isAbilityOpen.value = false; 
 };
 
-onMounted(fetchData);
+const toggleOwned = (catId) => {
+  if (ownedCatIds.value.has(catId)) {
+    ownedCatIds.value.delete(catId)
+  } else {
+    ownedCatIds.value.add(catId)
+  }
+  localStorage.setItem('my-owned-cats', JSON.stringify([...ownedCatIds.value]))
+}
+
+onMounted(() => {
+  fetchData() 
+  const saved = localStorage.getItem('my-owned-cats')
+  if (saved) {
+    try {
+      ownedCatIds.value = new Set(JSON.parse(saved))
+    } catch (e) {
+      console.error('讀取收藏失敗', e)
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -417,11 +465,42 @@ th {
 .clear-btn:hover {
   background: #bd2130;
 }
-
+.img-wrapper {
+  position: relative; 
+  display: inline-block; 
+  width: 100px; 
+  height: 80px;
+}
 .img-placeholder {
-  display: inline-block; width: 100px; height: 80px;
-  background: #eee; text-align: center; line-height: 30px;
+  display: inline-block; 
+  width: 100px; 
+  height: 80px;
+  background: #eee; 
+  text-align: center; 
+  line-height: 30px;
   font-size: 12px;
+}
+.star-overlay {
+  position: absolute;
+  top: 0px;    
+  right: 2px;  
+  width: 25px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  font-size: 1.5rem;
+  background-color: rgba(238, 238, 238, 0.85);
+  color: #d99426;
+  text-shadow: 0 0 5px rgba(0,0,0,0.5); 
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s, color 0.2s;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.star-overlay:hover {
+  transform: scale(1.1);
+  color: #e6a02e;
 }
 
 .toolbar {
