@@ -15,8 +15,8 @@
         </div>
       </div>
       <div class="tool-group">
+        <span class="label">收藏</span>
         <div class="btn-group">
-          <span class="label">收藏</span>
           <button 
             @click="showOwnedOnly = !showOwnedOnly" 
             class="toggle-btn"
